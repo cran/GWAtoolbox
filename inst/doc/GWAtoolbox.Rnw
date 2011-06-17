@@ -1,0 +1,972 @@
+\documentclass[a4paper, 10pt]{article}
+\usepackage{graphicx}
+\usepackage{makeidx}
+\usepackage{latexsym}
+\usepackage[pdftex,colorlinks]{hyperref}
+% \usepackage[utf8]{inputenc}
+
+\sloppy
+
+\title{GWAtoolbox \\An R package for the fast processing of data from Genome-Wide Association Studies}
+\author{Christian Fuchsberger \and Daniel Taliun \and Cristian Pattaro}
+
+% \VignetteIndexEntry{GWAtoolbox}
+
+\newcounter{example_cnt}
+
+\newenvironment{example}{\refstepcounter{example_cnt} \begin{quotation} \noindent \textbf{Example \arabic{example_cnt}} \sf}{$\lhd$ \end{quotation}}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\makeindex
+
+\begin{document}
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+\textbf{\emph{GWAtoolbox}} is an \emph{R} package for processing data originated from Genome-Wide Association Studies (GWAS). 
+GWAS have become increasingly popular in the last years, leading to the discovery of hundreds of common genetic variants affecting the risk of diseases (such as diabetes, hypertension, chronic kidney disease, etc.) or the level of quantitative biological parameters.
+
+Results from GWAS typically consist of large files where, for each single nucleotide polymorphism (SNP), statistics related to the association between the SNP and the studied trait are stored. 
+The number of SNPs which is currently being analyzed in most GWAS is in excess of 2.5 Million and is expected to increase rapidly. 
+For each individual SNP, the minimal information stored consists of the SNP unique name, chromosomal position, genotype (reference and non-reference alleles), frequency of the reference allele, SNP effect size, its standard error, and p-value. Additional information such as minor allele frequency (MAF) and  imputation quality are often provided.
+As a consequence, the typical dimension of GWAS result files is of >2.5 Million rows by >10 columns, for a total file size which is often larger than 300 Mbytes.
+
+With the aim of detecting common or less common genetic variants with modest effects, it is now common practice to pool results from individual studies into meta-analysis efforts which not rarely involve dozens of studies. 
+In these consortia initiatives, each individual study contributes from one to several files, either because multiple traits are being analyzed or because different analyses on the same trait are needed.
+Consequently, data analysts working in these consortia have to deal with a massive amount of files which need to be quality controlled to avoid problems during the meta-analysis process. 
+As a result of the quality control (QC) process, some files could be found to be corrupted or erroneous so that new data upload is needed from individual studies. 
+In this way, the loop between the consortium and the individual study analyst originates multiple file checks, until a satisfactory data quality is achieved.
+
+When working with such large datasets in R, simple operations such as uploading the GWAS files into the R working space, file management, and data plotting, can take a considerable amount of time, and a systematic QC of hundreds of GWAS files can be unfeasible or may require several weeks.
+
+The \emph{GWAtoolbox} provides a set of instruments to simplify the data handling in the framework of meta-analyses of GWA data.
+The function \emph{gwasqc()} is capable to process a high number of GWAS data files in a single run, and producing several QC reports and figures. Routines for the between-study comparison are also provided to check systematic difference between files. In addition, the package contains annotation and graphical tools to assist the result interpretation.
+
+\section{Installation}
+The \emph{GWAtoolbox} package can be downloaded from \url{http://www.eurac.edu/GWAtoolbox.html}.
+It requires R version 2.9.2 or higher. The installation procedure depends on the host operating system and user privileges. In the following, detailed installation instructions for a wide range of settings are provided.
+
+\subsection{Windows}
+
+\emph{GWAtoolbox} for Windows is distributed in compiled binary format. Installation:
+
+\begin{itemize}
+\item[1. ] Download the latest version of the package: \emph{GWAtoolbox\_X.Y.Z.zip}.
+\item[2. ] Start the R program.
+\item[3a.] If you have administrator privileges, you can install the package to the main R library:
+	\begin{itemize}
+	\item[i.] Execute the command:
+		\begin{quotation}
+		\noindent \texttt{install.packages("path/to/GWAtoolbox\_X.Y.Z.zip", repos=NULL)}
+		\end{quotation}
+		where \texttt{path/to} is the directory where the package was downloaded.
+	\item[ii.] Load the package in R with the command:
+		\begin{quotation}
+		\noindent \texttt{library(GWAtoolbox)}
+		\end{quotation}
+	\end{itemize}
+\item[3b.] If you do NOT have administrator privileges:
+	\begin{itemize}
+	\item[i.] Execute the command:
+		\begin{quotation}
+		\noindent \texttt{install.packages("path/to/GWAtoolbox\_X.Y.Z.zip",\linebreak lib="path/to/install/directory",\linebreak repos=NULL)}
+		\end{quotation}
+		where \texttt{path/to} is the directory where the package was downloaded, and \texttt{path/to/install/directory} is the path with your install directory.
+	\item[ii.] Load the package in R with command:
+		\begin{quotation}
+		\noindent \texttt{library(GWAtoolbox, lib.loc = "path/to/install/directory")}
+		\end{quotation}
+	\end{itemize}
+\end{itemize}
+
+\subsection{Unix}
+
+\emph{GWAtoolbox} for Unix is distributed in source format and, therefore, it needs to be compiled on the user machine. 
+This requires the following tools to be installed:
+\begin{itemize}
+\item C/C++ compilers
+\item GNU Scientific Library (GSL)\footnote{http://www.gnu.org/software/gsl/} version 1.8 or higher
+\end{itemize}
+When these requirements are fulfilled, the package can be installed as follows:
+\begin{itemize}
+\item[1. ] Download the latest package version \emph{GWAtoolbox\_X.Y.Z.tar.gz}.
+\item[2a.] If you have administrator privileges, you can install packages to the main R library:
+	\begin{itemize}
+	\item[i.] In the Unix shell execute the command:
+		\begin{quotation}
+		\noindent \texttt{R CMD INSTALL path/to/GWAtoolbox\_X.Y.Z.tar.gz}
+		\end{quotation}
+		where \texttt{path/to} is the directory where the package was downloaded.
+	\item[ii.] Start the R program and load the package with the command:
+		\begin{quotation}
+		\noindent \texttt{library(GWAtoolbox)}
+		\end{quotation}
+	\end{itemize}
+\item[2b.] If you do NOT have administrator privileges, follow the following steps:
+	\begin{itemize}
+	\item[i.] In the Unix shell execute the single line command:
+		\begin{quotation}
+		\noindent \texttt{R CMD INSTALL path/to/GWAtoolbox\_X.Y.Z.tar.gz \linebreak -l path/to/install/directory}
+		\end{quotation}
+		where \texttt{path/to} is the directory where the package was downloaded, and \texttt{path/to/install/directory} is the path with your install directory.
+	\item[ii.] Start the R program and load the package with the command:
+		\begin{quotation}
+		\noindent \texttt{library(GWAtoolbox, lib.loc="path/to/install/directory")}
+		\end{quotation}
+	\end{itemize}
+\end{itemize}
+
+\subsection{Mac OS X}
+
+\emph{GWAtoolbox} for Mac OS X is distributed in compiled binary format. The following steps describe the installation procedure:
+\begin{itemize}
+\item[1. ] Download the latest package version \emph{GWAtoolbox\_X.Y.Z.tar.gz}.
+\item[2a.] To install from the Mac OS X shell (\emph{Terminal}):
+\begin{itemize}
+	\item[i.] If you have administrator privileges, you can install packages to the main R library:
+		\begin{itemize}
+		\item[A.] In the Mac OS X shell execute the command:
+			\begin{quotation}
+			\noindent \texttt{R CMD INSTALL path/to/GWAtoolbox\_X.Y.Z.tar.gz}
+			\end{quotation}
+			where \texttt{path/to} is the directory where the package was downloaded.
+		\item[B.] Start the R program and load the package with the command:
+			\begin{quotation}
+			\noindent \texttt{library(GWAtoolbox)}
+			\end{quotation}
+		\end{itemize}
+	\item[ii.] If you do NOT have administrator privileges:
+		\begin{itemize}
+		\item[A.] In the Mac OS X shell execute the single line command:
+			\begin{quotation}
+			\noindent \texttt{R CMD INSTALL path/to/GWAtoolbox\_X.Y.Z.tar.gz \linebreak -l path/to/install/directory}
+			\end{quotation}
+			where \texttt{path/to} is the directory where the package was downloaded, and \texttt{path/to/install/directory} is the path with your install directory.
+		\item[B.] Start the R program and load the package with the command:
+			\begin{quotation}
+			\noindent \texttt{library(GWAtoolbox, lib.loc="path/to/install/directory")}
+			\end{quotation}
+		\end{itemize}
+\end{itemize}
+\item[2b.] To install from R:
+\begin{itemize}
+	\item[i. ] Start the R program.
+	\item[ii.] If you have administrator privileges, you can install packages to the main R library:
+		\begin{itemize}
+		\item[A.] Execute the command:
+			\begin{quotation}
+			\noindent \texttt{install.packages("path/to/GWAtoolbox\_X.Y.Z.tar.gz", repos=NULL)}
+			\end{quotation}
+			where \texttt{path/to} is the directory where the package was downloaded.
+		\item[B.] Load the package in R with the command:
+			\begin{quotation}
+			\noindent \texttt{library(GWAtoolbox)}
+			\end{quotation}
+		\end{itemize}
+	\item[iii.] If you do NOT have administrator privileges:
+		\begin{itemize}
+		\item[A.] Execute the command:
+			\begin{quotation}
+			\noindent \texttt{install.packages("path/to/GWAtoolbox\_X.Y.Z.tar.gz",\linebreak lib="path/to/install/directory",\linebreak repos=NULL)}
+			\end{quotation}
+			where \texttt{path/to} is the directory where the package was downloaded, and \texttt{path/to/install/directory} is the path with your install directory.
+		\item[B.] Load the package in R with the command:
+			\begin{quotation}
+			\noindent \texttt{library(GWAtoolbox, lib.loc = "path/to/install/directory")}
+			\end{quotation}
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+
+\section{The Quality Control Workflow}
+
+A careful and thorough data QC should be performed before starting any meta-analysis of GWAS data, especially when many studies are involved.
+In this framework, we identified three complementary aspects of a good QC analysis:
+\begin{enumerate}
+\item Formal checking: control that all files that are going to be submitted to the meta-analysis fulfill some formatting guidelines, including:
+\begin{itemize}
+\item consistency of column names with meta-analysis guidelines;
+\item presence of the minimal required information; 
+\item data are in a format that can be analyzed (numeric, character, factor); 
+\item all SNP identification numbers are unique; 
+\item alleles are coded in letters/numbers as expected; 
+\item missing values are coded in a consistent way; 
+\item the field separator is as expected;
+\item strand information is present and unequivocal;
+\item the number of chromosomes and chromosome coding are as expected;
+\end{itemize}
+\item Quality checking: evaluating the quality of data in each single file.
+This includes:
+\begin{itemize}
+\item assessing the presence of unexpected values for some of the items required for the meta-analysis (e.g.: negative p-values or negative standard errors);
+\item assessing p-value inflation and analyzing p-value distribution;
+\item assessing the distribution of the main summary statistics, including the effect estimates, their standard errors, genotype imputation quality, etc.
+\end{itemize}
+\item Global checking: identification of any systematic bias that may affect the analysis. This step is aimed to uncover studies that are systematically different from the others. This may happen when, for instance, analysts of one study forgot to log-transform the phenotype or apply the wrong model to the data.
+\end{enumerate}
+
+Formal and quality checks of individual studies are performed in \emph{GWAtoolbox} using the \emph{gwasqc()} function.
+% Global checking is performed partially with \emph{gwasqc()} and more thoroughly with the \emph{NAME OF FUNCTION PLEASE PROVIDE()} function.
+%In particular, \emph{gwasqc()} is the core-function of the \emph{GWAtoolbox} package. 
+\emph{gwasqc()} was built to address specific requirements, specifically:
+\begin{enumerate}
+\item it allows rapid file processing and reporting;
+\item it eliminates routine user operations;
+\item it allows multi-format reporting, including \emph{HTML}, \emph{CSV}, and text files.
+
+\end{enumerate}
+
+The complete QC workflow can be summarized in four basic steps (see Figure \ref{fig:workflow}):
+
+\begin{enumerate}
+\item collect the GWAS data files;
+\item write an input script to process of all GWAS files with the \emph{gwasqc()} function;
+\item run the QC using \emph{gwasqc()}; % first and \emph{NAME OF FUNCTION PLEASE PROVIDE()} then;
+\item analyze the QC results to uncover errors or inconsistencies.
+\end{enumerate}
+\begin{figure}[!ht]
+\centering
+\includegraphics[type=jpg, ext=.jpg, read=.jpg, width=0.7\linewidth]{workflow}
+\caption{The quality control workflow.}
+\label{fig:workflow}
+\end{figure}
+
+In the next sections we cover each of the four steps and describe the requirements for the input files and the precise content of all output files.
+
+\section{GWAS Data Files}
+GWAS data are usually stored as delimited text files.
+The first line of the file is the header row that describes the content of every column.
+The field separator between columns can be any among \emph{whitespace}, \emph{tabulation}, \emph{comma}, or \emph{semicolon}. 
+The field separator must be the same for every row in the file, including the header.
+
+There is a minimum set of columns, that every GWAS data file should contain. 
+In \emph{GWAtoolbox}, the following information is required for every file:
+\begin{itemize}
+\item Marker name
+\item Chromosome number or name
+\item Marker position
+\item Coded and non-coded allele
+\item Allele frequency for coded allele
+\item Strand
+\item Imputation label
+\item Imputation quality
+\item Effect estimate
+\item Standard error of the effect estimate
+\item P-value
+\end{itemize}
+
+More non-mandatory items can be included in the data file as, for example, the study sample size, the SNP call rate for genotyped SNPs, the p-value of the Hardy-Weinberg equilibrium test for genotyped SNPs, etc.
+
+
+\section{The Input Script}
+\emph{gwasqc()} can analyze several GWAS data files consecutively. 
+Instructions are provided to \emph{gwasqc()} through a script in a text file.
+The format of the script file resembles the METAL input file format\footnote{http://www.sph.umich.edu/csg/abecasis/metal/}.
+
+In the input script, the user can list all GWAS file names to be analyzed and specify the format of each single GWAS file, including column names, field separator, etc. 
+In the case when more GWAS files are in the same format, file specifications can be entered only once for all files.
+Example \ref{ex:full_script} illustrates the content of a hypothetical input script file.
+
+\begin{example} 
+\label{ex:full_script}
+\begin{verbatim}
+# Description of input data columns
+MARKER        SNPID
+CHR           Chromosome
+POSITION      Position
+N             n_total
+ALLELE        coded_allele noncoded_allele
+STRAND        strand
+EFFECT        beta
+STDERR        se
+PVALUE        pval
+FREQLABEL     allele_freq_coded_allele
+IMPUTED       imputed
+IMP_QUALITY   oevar_imp
+
+# High quality filters
+HQ_SNP   0.01   0.3
+
+# Plotting filters
+MAF      0.01   0.05
+IMP      0.3    0.6
+
+# Prefix for output files
+PREFIX   res_
+
+# Input file with GWA data
+PROCESS  input_file.txt
+\end{verbatim}
+\end{example}
+
+\subsection{Listing the Input Data Files}
+The names of the GWAS data files are specified in the input script with the command \textbf{PROCESS}\index{PROCESS}\footnote{\emph{GWAtoolbox} supports single line feed ('\textbackslash n') character or carriage return character ('\textbackslash r') followed by line feed character as the line terminators in the input files.}
+If multiple files have to be checked, multiple \textbf{PROCESS}\index{PROCESS} lines must be specified.
+
+\begin{example}
+The input script contains the following two lines:
+\begin{verbatim}
+PROCESS   input_file_1.txt
+PROCESS   /dir_1/dir_2/input_file_2.csv
+\end{verbatim}
+QC is applied first to \emph{input\_file\_1.txt} and then to \emph{input\_file\_2.csv}.
+When files reside on different directories, the full path must be specified.
+\end{example}
+
+\subsection{Describing the Input Data Columns}
+\subsubsection{Field Separator}
+The field separator may be different for each GWAS data file. 
+\emph{gwasqc()} automatically detects the field separator of each input file \emph{based on the first 10 rows}. 
+The user has the possibility to specify the separator manually for each GWAS file using the command \textbf{SEPARATOR}\index{SEPARATOR}. 
+Table \ref{table:separator_cmd} lists all supported separators.
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Argument & Separator \\
+\hline
+COMMA\index{COMMA} & \emph{comma}\\
+TAB\index{TAB} & \emph{tabulation}\\
+WHITESPACE\index{WHITESPACE} & \emph{whitespace}\\
+SEMICOLON\index{SEMICOLON} & \emph{semicolon}\\
+\hline
+\end{tabular}
+\caption{The list of arguments for the SEPARATOR command.}
+\label{table:separator_cmd}
+\end{center}
+\end{table}
+
+\begin{example}
+In the following input script:
+\begin{verbatim}
+PROCESS      input_file_1.txt 
+SEPARATOR    TAB              
+PROCESS      input_file_2.csv 
+PROCESS      input_file_3.txt 
+\end{verbatim}
+the field separator for the input file \emph{input\_file\_1.txt} is determined automatically by \emph{gwasqc()}; the separator for the input files \emph{input\_file\_2.csv} and \emph{input\_file\_3.txt} is set to tabulation by the user.
+\end{example}
+
+If the user manually specifies the wrong field separator, then the file(s) still will be processed with this separator. As a consequence, the mandatory columns will not be detected and the user will see it in the final report.\\
+
+\subsubsection{Missing Values}
+By default, \emph{gwasqc()} assumes that missing values are labeled as \emph{NA}. However, the label for missing value can be specified manually by the user with the command \textbf{MISSING}\index{MISSING}.
+
+\begin{example}
+In the following input script:
+\begin{verbatim}
+MISSING     -                
+PROCESS     input_file_1.txt 
+MISSING     NA               
+PROCESS     input_file_2.csv 
+\end{verbatim}
+the \emph{hyphen} symbol is set as symbol for missing value for the file \emph{input\_file\_1.txt}. Afterwards, the coding for missing vaules is changed to \emph{NA} and is used to process \emph{input\_file\_2.csv}.
+\end{example}
+
+\subsubsection{Column Names}
+\label{section:column_names}
+In table \ref{table:default_columns} the complete list of default column names for the GWAS data files is reported. 
+These names identify uniquely the items in the GWAS data file.
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{|l|p{8cm}|}
+\hline
+Default column name(s) & Description \\
+\hline
+MARKER\index{MARKER} & Marker name \\
+CHR\index{CHR} & Chromosome number or name \\
+POSITION\index{POSITION} & Marker position \\
+ALLELE1\index{ALLELE1}, ALLELE2\index{ALLELE2} & Coded and non-coded alleles \\
+FREQLABEL\index{FREQLABEL} & Allele frequency for the coded allele \\
+STRAND\index{STRAND} & Strand \\
+IMPUTED\index{IMPUTED} & Label value indicating if the marker was imputed (1) or genotyped (0) \\
+IMP\_QUALITY\index{IMP\_QUALITY} & Imputation quality statistics; this can be different depending on the software used for imputation: MACH's \emph{Rsq}, IMPUTE's \emph{properinfo}, ...  \\
+EFFECT\index{EFFECT} & Effect estimate \\
+STDERR\index{STDERR} & Standard error of the effect estimate \\
+PVALUE\index{PVALUE} & P-value \\
+HWE\_PVAL\index{HWE\_PVAL} & Hardy-Weinberg equilibrium p-value \\
+CALLRATE\index{CALLRATE} & Genotype callrate \\
+N\index{N} & Sample size \\
+USED\_FOR\_IMP\index{USED\_FOR\_IMP} & Label value indicating if a marker was used for imputation (1) or not (0) \\
+\hline
+\end{tabular}
+\caption{The default column names.}
+\label{table:default_columns}
+\end{center}
+\end{table}
+
+Given that different names can be provided with the GWAS data files, \emph{gwasqc()} allows to redefine the default values for every input file in the input script. 
+The redefinition command consists of the default column name followed by a new column name. To redefine the default column names for \emph{coded} and
+\emph{non-coded} alleles, the command \textbf{ALLELE}\index{ALLELE} is followed by two new column names.
+
+\begin{example}
+Let's assume to have two input files, \emph{input\_file\_1.txt} and \emph{input\_file\_2.txt}. In \emph{input\_file\_1.txt}, the column names for the effect estimate and its standard error are \emph{beta} and \emph{SE}, respectively. In \emph{input\_file\_2.txt}, the column name for the effect estimate is the same as in \emph{input\_file\_1.txt}, but the column name for the standard error is \emph{STDERR}. 
+The correct column redefinitions are as follows:
+\begin{verbatim}
+EFFECT     beta
+STDERR     SE
+PROCESS    input_file_1.txt
+STDERR     STDERR
+PROCESS    input_file_2.csv
+\end{verbatim}
+First, we redefine column names for the file \emph{input\_file\_1.txt}. Notice that 
+the column \emph{beta} doesn't need to be redefined for file \emph{input\_file\_2.csv}. 
+However, for this file we need to redefine the column \emph{STDERR}, returning it to its default name.
+\end{example}
+
+\begin{example}
+Consider an input file \emph{input\_file\_1.txt} with the following names for ALLELE1 and ALLELE2: \emph{myRefAllele} and \emph{myNonRefAllele}.
+The new column definition is applied as follows:
+\begin{verbatim}
+ALLELE    myRefAllele myNonRefAllele
+PROCESS   input_file_1.txt
+\end{verbatim}
+\end{example}
+
+\subsubsection{Case Sensitivity}
+By default, \emph{gwasqc()} assumes that column names of GWAS input files are case insensitive. For example, the names \emph{STDERR}, \emph{StdErr}, and \emph{STDErr} are all perfectly equivalent.
+This behaviour can be changed for every input file in the input script using the command \textbf{CASESENSITIVE}\index{CASESENSITIVE}. Table \ref{table:casesensitive_cmd} lists all possible arguments.
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Argument & Description \\
+\hline
+0 & Column names are case insensitive (default) \\
+1 & Column names are case sensitive \\
+\hline
+\end{tabular}
+\caption{The list of arguments for the CASESENSITIVE command.}
+\label{table:casesensitive_cmd}
+\end{center}
+\end{table}
+
+\begin{example}
+Consider the following commands:
+\begin{verbatim}
+CASESENSITIVE   1
+PROCESS         input_file_1.txt
+CASESENSITIVE   0
+PROCESS         input_file_2.csv 
+\end{verbatim}
+Column names of \emph{input\_file\_1.txt} are case sensitive and must correspond exactly to the default column names; column names of \emph{input\_file\_2.csv} are case insensitive.
+\end{example}
+
+\subsection{Specifying Data Filters}
+
+\subsubsection{Implausible Values Filters}
+Often, there is the necessity to identify implausible values for the statistics that will be included in the meta-analysis. 
+Implausible values for the effect estimate, for its standard error, or the p-value are sometimes generated by the software used for the association testing.
+For example, in the case of a disease outcome with a small number of cases or of a SNP with very small MAF, statistical packages can report inconsistent results due to statistical algorithms that fail to converge because of data sparseness. 
+Other types of inconsistencies can originate from errors in the file management. \\
+
+In these situations, it is important to identify the SNPs with inconsistent values, so that they can be removed before starting the meta-analysis.
+\emph{gwasqc()} can identify these values by using appropriate threshold values. The number of SNPs affected by this kind of problems is reported. 
+In addition, these SNPs are excluded from the calculation of the data quality summary statistics.\\
+Implausible value filters are used by \emph{gwasqc()} to identify implausible values. Table \ref{table:implausible_values} lists the columns for which the filters can be applied and their default thresholds.
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Default column name & Default thresholds \\
+\hline
+STDERR\index{STDERR} & $[0, 100000]$ \\
+IMP\_QUALITY\index{IMP\_QUALITY} & $(0, 1.5)$ \\
+PVALUE\index{PVALUE} & $(0, 1)$ \\
+FREQLABEL\index{FREQLABEL} & $(0, 1)$ \\
+HWE\_PVAL\index{HWE\_PVAL} & $(0, 1)$ \\
+CALLRATE\index{CALLRATE}& $(0, 1)$ \\
+\hline
+\end{tabular}
+\caption{The default implausible value filters.}
+\label{table:implausible_values}
+\end{center}
+\end{table}
+
+The default thresholds can be redefined for every column in the input script. 
+The new thresholds for a column can be specified after the redefinition of the column name (see Section \ref{section:column_names}).
+
+\begin{example}
+Let's assume that the file \emph{input\_file\_1.txt} has a standard error column called \emph{STDERR} and 
+that the corresponding column in the input file \emph{input\_file\_2.csv} is called \emph{SE}. In addition, the imputation quality column is defined as \emph{oevar\_imp} in both files.
+The user can redefine the column names while applying different plausibility filters:
+\begin{verbatim}
+STDERR        STDERR 0 80000
+IMP_QUALITY   oevar_imp 0 1
+PROCESS       input_file_1.txt
+STDERR        SE 0 100000
+PROCESS       input_file_2.csv
+\end{verbatim}
+The file \emph{input\_file\_1.txt} has new $[0, 80000]$ thresholds for the standard error and new $(0, 1)$ thresholds for the imputation quality. 
+For the file \emph{input\_file\_2.csv} the thresholds of $[0, 100000]$ will be applied to the standard error column, while
+for the imputation quality column the same filters as for the \emph{input\_file\_1.txt} will be applied.
+\end{example}
+
+\subsubsection{High Quality Filters}
+\label{section:hq_data_filter}
+In many cases, analysts want to restrict the analyses to SNPs with high imputation quality and with not too small MAF.
+We call these SNPs '\emph{high quality SNPs}', that is SNPs for which results should be quite robust.
+In the special case, when estimating the genomic inflation factor, \emph{lambda}, to check for the presence of cryptic relatedness or hidden population sub-structures, it may be important to remove SNPs that could artificially inflate the number of significant hits. 
+Summary statistics are calculated after excluding SNPs with low quality (\emph{CSV} report files). 
+Table \ref{table:hq_values} lists the default thresholds for allele frequency and  imputation quality.
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Default column name & Default thresholds \\
+\hline
+FREQLABEL\index{FREQLABEL} & $> 0.01$ \\
+IMP\_QUALITY\index{IMP\_QUALITY} & $> 0.3$ \\
+\hline
+\end{tabular}
+\caption{The default high quality imputation filters.}
+\label{table:hq_values}
+\end{center}
+\end{table}
+
+The default thresholds can be redefined with the command \textbf{HQ\_SNP}\index{HQ\_SNP} for every input file in the input script. 
+The command is followed by two values: the first one is the threshold for the MAF and the one is the threshold for the imputation quality.
+
+\begin{example}
+If we want to define 'high quality SNPs' those with MAF $> 0.03$ and imputation quality $> 0.4$, we would add the following lines to the input script:
+\begin{verbatim}
+HQ_SNP     0.03 0.4
+PROCESS    input_file_1.txt
+\end{verbatim}
+\end{example}
+
+\subsubsection{Plotting Filters}
+\label{section:plotting_filter}
+The plotting filters are used to select meaningful data to be displayed in the various summary plots. Each filter allows two threshold levels: each of them is applied dependently on the plot type and column. Figure \ref{fig:plots} (see Section \ref{section:number_and_content_of_plots}) shows what data and filters are used when producing plots. Table \ref{table:maf_imp_values} lists the default threshold values.
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{|l|p{3cm}|p{3cm}|}
+\hline
+Default column name & Default 1st level thresholds & Default 2nd level thresholds\\
+\hline
+FREQLABEL\index{FREQLABEL} & $> 0.01$ & $> 0.05$ \\
+IMP\_QUALITY\index{IMP\_QUALITY} & $> 0.3$ & $> 0.6$ \\
+\hline
+\end{tabular}
+\caption{The default plotting filter.}
+\label{table:maf_imp_values}
+\end{center}
+\end{table}
+
+The default threshold values for MAF and imputation quality can be redefined accordingly with the commands \textbf{MAF}\index{MAF} and \textbf{IMP}\index{IMP} for the every input file in the input script.
+
+\begin{example}
+Assume the input script contains the following commands:
+\begin{verbatim}
+MAF        0.02 0.03
+IMP        0.3 0.5
+PROCESS    input_file_1.txt
+\end{verbatim}
+Here, new SNP quality thresholds are set for plotting results from \emph{input\_file\_1.txt}. For the first level thresholds, we have selected MAF $> 0.02$ and the imputation quality $> 0.3$, for the second level threshold, MAF $> 0.03$ and imputation quality $> 0.5$.
+\end{example}
+
+\subsection{Controlling The Output}
+
+\subsubsection{Output File Names}
+Output file names are defined based on input file names, with the addition of a specified prefix (all types of output files will share the same prefix). The prefix can be specified once for all input files, or for every single input file or groups of input files explicitly using the command \textbf{PREFIX}\index{PREFIX}.
+
+\begin{example}
+Consider the following input script:
+\begin{verbatim}
+PREFIX       res_
+PROCESS      input_file_1.txt
+PROCESS      input_file_2.csv
+
+PREFIX       result_
+PROCESS      input_file_3.tab
+\end{verbatim}
+All result output files corresponding to the input files \emph{input\_file\_1.txt} and \emph{input\_file\_2.csv} will be prefixed with \emph{res\_}; result output files corresponding to the input file \emph{input\_file\_3.tab} will be prefixed with \emph{result\_}.
+\end{example}
+
+\subsubsection{Verbosity Level For Graphical Output}
+The user can control the number of output pictures with the command \textbf{VERBOSITY}\index{VERBOSITY} (see Table \ref{table:verbosity_cmd} for the available options). 
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{|l|p{8cm}|}
+\hline
+Argument & Description \\
+\hline
+1 & Lowest verbosity level (default). \\
+2 & Highest verbosity level. \\
+\hline
+\end{tabular}
+\caption{The list of arguments for the VERBOSITY command.}
+\label{table:verbosity_cmd}
+\end{center}
+\end{table}
+
+\begin{example}
+The input script contains the following commands:
+\begin{verbatim}
+VERBOSITY       2
+PROCESS         input_file_1.txt
+VERBOSITY       1
+PROCESS         input_file_2.csv 
+\end{verbatim}
+The file \emph{input\_file\_1.txt} is processed with the highest verbosity level and therefore all figures are generated; \emph{input\_file\_2.csv} is processed with the lowest verbosity level and less output figures are generated.
+\end{example}
+
+\subsubsection{Number And Content Of Plots}
+\label{section:number_and_content_of_plots}
+Number and content of the output plots depend on the setting of the plotting filters (see Section \ref{section:plotting_filter}) and on the available information in the input files. Figure \ref{fig:plots} shows all the dependencies. If some dependency is not satisfied because of missing data or filter setting, then the corresponding plot is not produced or may be truncated at different levels.
+\begin{figure}[!ht]
+\centering
+\includegraphics[type=jpg, ext=.jpg, read=.jpg, width=0.5\linewidth]{plots}
+\caption{The dependencies of graphical outputs on columns and filters.}
+\label{fig:plots}
+\end{figure}
+
+When multiple files are processed, boxplots from the distributions of the effect estimates are displayed in a single graph for across-study comparison.  It is possible to specify the width of each box based on one of the other available information (typically the sample size).
+As an argument, \textbf{BOXPLOTWIDTH}\index{BOXPLOTWIDTH} requires one of the default column names.
+If \textbf{BOXPLOTWIDTH}\index{BOXPLOTWIDTH} is not specified all boxplots have the same width.
+
+It is also possible to define labels for each input file, to be used in the plots instead of the full file names, which could be too long and, therefore, clutter the plots.
+
+\begin{example}
+Let \emph{n\_total} be the column name which identifies the sample size in the input file \emph{input\_file\_1.txt}, and \emph{samplesize} the corresponding name in \emph{input\_file\_2.csv}.
+Consider the following input script:
+\begin{verbatim}
+N              n_total
+PROCESS        input_file_1.txt	first
+N              samplesize
+PROCESS        /dir_1/dir_2/input_file_2.csv	second
+BOXPLOTWIDTH   N
+\end{verbatim}
+The width of the first boxplot for the input file \emph{input\_file\_1.txt} depends on the \emph{n\_total} column, while the width of the second boxplot for the input file \emph{input\_file\_2.csv} depends on the \emph{samplesize} column.
+The labels "first" and "second" will be used to label the two studies in the plots.
+\end{example}
+
+\section{The Output Files}
+The typical output of the \emph{gwasqc()} function consists of the following files:
+\begin{enumerate}
+\item \textbf{Graphical files} (\emph{PNG} file extension) include \textbf{histograms} and \textbf{boxplots} of the distribution of the main statistics from each GWAS file: effect estimates, imputation quality index, sample size, p-value, allele frequency; 
+\textbf{QQ-plots} of the p-value distribution are also provided to investigate the presence of study-design bias.
+See Figure \ref{fig:plots} for an exhaustive list of available plots.
+\item \textbf{Textual report} (\emph{TXT} file extension) contains information on the GWAS file-format quality and statistics summarizing the distribution of all data present in the GWAS files (effect estimates, p-values, etc.).
+The statistics provided in this report can be compared with the graphical output described above.
+\item \textbf{Comma separated report} (\emph{CSV} file extension) contains summary statistics for the high quality SNPs, as they have been defined by the user when setting the parameter \textbf{HQ\_SNP}\index{HQ\_SNP} in the QC script (see Section \ref{section:hq_data_filter}).
+The tabular format of this file is intended to be useful for users who wants to perform additional analyses and compare results from different GWAS files without having to manage the large original GWAS files.
+Figure \ref{fig:csv_report_file} shows an example of such file.
+\begin{figure}[!h]
+\begin{center}
+\tiny
+%\scalebox{0.5}{
+%\noindent\makebox[\textwidth]{
+%\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+%\hline
+%& N & EFFECT & STDERR & PVALUE & MAF & IMPUTED & IMP\_QUALITY & CALLRATE & HWE\_PVAL & STD\_EFFECT\_0.5 & STD\_EFFECT\_0.75 & STD\_EFFECT\_0.95 & STD\_EFFECT\_0.99 & STD\_EFFECT\_1 \\
+%\hline
+%N & 2543887 & 2542617 & 2542422 & 2542617 & 2543887 & 2543887 & 2543887 & 2543887 & NA & NA & NA & NA & NA & NA \\
+%\hline
+%N\_HQ & 2448544 & 2448544 & 2448544 & 2448544 & 2448544 & 2448544 & 2448544 & 2448544 & NA & NA & NA & NA & NA & NA \\
+%\hline
+%N\_NAs & 0 & 1270 & 1270 & 1270 & 0 & 0 & 0 & 0 & NA & NA & NA & NA & NA & NA \\
+%\hline
+%Mean & 516 & -0.00137 & 0.295076 & 0.500823 & 0.230416 & 1 & 0.958868 & 1 & NA & NA & NA & NA & NA & NA \\
+%\hline
+%StdDev & 0 & 0.333379 & 0.158119 & 0.28873 & 0.143312 & 0 & 0.097734 & 0 & NA & NA & NA & NA & NA & NA \\
+%\hline
+%Min & 516 & -8.76038 & 0.17353 & 7.34E-08 & 0.010001 & 1 & 0.300006 & 1 & NA & NA & NA & NA & NA & NA \\
+%\hline
+%Max & 516 & 6.12165 & 2.53341 & 1 & 0.5 & 1 & 1.0467 & 1 & NA & NA & NA & NA & NA & NA \\
+%\hline
+%Median & 516 & -0.00149 & 0.233707 & 0.502629 & 0.217008 & 1 & 0.994577 & 1 & NA & NA & NA & NA & NA & NA \\
+%\hline
+%Skewness & nan & -0.06933 & 2.886758 & -0.00935 & 0.214034 & nan & -3.90226 & nan & NA & -0.00587 & -0.01036 & 0.022903 & 0.040024 & -0.07186 \\
+%\hline
+%Kurtosis & nan & 9.109873 & 11.14145 & -1.20085 & -1.18454 & nan & 16.76683 & nan & NA & 3.297394 & 3.822136 & 4.712606 & 5.861049 & 9.066722 \\
+%\hline
+%\end{tabular}}
+%}
+\begin{tabular}{|l|p{1.8cm}|p{1.8cm}|p{1.8cm}|p{1.8cm}|p{1.8cm}|}
+\hline
+& N & EFFECT & STDERR & PVALUE & MAF \\
+\hline
+N & 2543887 & 2542617 & 2542422 & 2542617 & 2543887 \\
+\hline
+N\_HQ & 2448544 & 2448544 & 2448544 & 2448544 & 2448544 \\
+\hline
+N\_NAs & 0 & 1270 & 1270 & 1270 & 0 \\
+\hline
+Mean & 516 & -0.00137 & 0.295076 & 0.500823 & 0.230416 \\
+\hline
+StdDev & 0 & 0.333379 & 0.158119 & 0.28873 & 0.143312 \\
+\hline
+Min & 516 & -8.76038 & 0.17353 & 7.34E-08 & 0.010001 \\
+\hline
+Max & 516 & 6.12165 & 2.53341 & 1 & 0.5 \\
+\hline
+Median & 516 & -0.00149 & 0.233707 & 0.502629 & 0.217008 \\
+\hline
+Skewness & nan & -0.06933 & 2.886758 & -0.00935 & 0.214034 \\
+\hline
+Kurtosis & nan & 9.109873 & 11.14145 & -1.20085 & -1.18454 \\
+\hline
+\end{tabular}
+
+\vspace{0.2cm}
+
+\begin{tabular}{|l|p{1.8cm}|p{1.8cm}|p{1.8cm}|p{1.8cm}|p{1.8cm}|}
+\hline
+& IMPUTED & IMP\_QUALITY & CALLRATE & HWE\_PVAL & STD\_EFFECT\_0.5 \\
+\hline
+N & 2543887 & 2543887 & 2543887 & NA & NA \\
+\hline
+N\_HQ & 2448544 & 2448544 & 2448544 & NA & NA \\
+\hline
+N\_NAs & 0 & 0 & 0 & NA & NA \\
+\hline
+Mean & 1 & 0.958868 & 1 & NA & NA \\
+\hline
+StdDev & 0 & 0.097734 & 0 & NA & NA \\
+\hline
+Min & 1 & 0.300006 & 1 & NA & NA \\
+\hline
+Max & 1 & 1.0467 & 1 & NA & NA \\
+\hline
+Median & 1 & 0.994577 & 1 & NA & NA \\
+\hline
+Skewness & nan & -3.90226 & nan & NA & -0.00587 \\
+\hline
+Kurtosis & nan & 16.76683 & nan & NA & 3.297394 \\
+\hline
+\end{tabular}
+
+\vspace{0.2cm}
+
+\begin{tabular}{|l|p{1.8cm}|p{1.8cm}|p{1.8cm}|p{1.8cm}|}
+\hline
+& STD\_EFFECT\_0.75 & STD\_EFFECT\_0.95 & STD\_EFFECT\_0.99 & STD\_EFFECT\_1 \\
+\hline
+N & NA & NA & NA & NA \\
+\hline
+N\_HQ & NA & NA & NA & NA \\
+\hline
+N\_NAs & NA & NA & NA & NA \\
+\hline
+Mean & NA & NA & NA & NA \\
+\hline
+StdDev & NA & NA & NA & NA \\
+\hline
+Min & NA & NA & NA & NA \\
+\hline
+Max & NA & NA & NA & NA \\
+\hline
+Median & NA & NA & NA & NA \\
+\hline
+Skewness & -0.01036 & 0.022903 & 0.040024 & -0.07186 \\
+\hline
+Kurtosis & 3.822136 & 4.712606 & 5.861049 & 9.066722 \\
+\hline
+\end{tabular}
+\caption{The comma separated report file.}
+\label{fig:csv_report_file}
+\end{center}
+\end{figure}
+For each of the variables listed by columns, summary statistics are reported by row.
+Specifically:
+\begin{itemize}
+\item \textbf{N} -- number of SNPs with available information (i.e. non-missing values).
+\item \textbf{N\_HQ} -- number of high quality SNPs with information available (i.e. non-missing values).
+\item \textbf{N\_NAs} -- number of SNPs with missing values for the specific field of interest.
+\item \textbf{Mean}, \textbf{StdDev}, \textbf{Min}, \textbf{Max}, \textbf{Median}, \textbf{Skewness}, and \textbf{Kurtosis} are referred to the distribution of the specific field.
+\end{itemize}
+Columns include:
+\begin{itemize}
+\item \textbf{N} -- study sample size.
+\item \textbf{EFFECT}, \textbf{STDERR}, and \textbf{PVALUE} -- summaries of the SNP-phenotype associations.
+\item \textbf{MAF}, \textbf{IMPUTED}, \textbf{IMP\_QUALITY}, \textbf{CALLRATE}, and \textbf{HWE\_PVAL} -- summaries of the genotype distribution and quality.
+\item \textbf{STD\_EFFECT\_0.5}, \textbf{STD\_EFFECT\_0.75}, \textbf{STD\_EFFECT\_0.95}, \textbf{STD\_EFFECT\_0.99}, \textbf{STD\_EFFECT\_1} -- these columns are only of interest for the reported skewness and kurtosis of the standardized effect estimates (beta/SE).
+The numbers 0.5, 0.75, 0.95, 0.99, and 1 are referred to the percentage of SNPs with the highest p-values chosen to study the effect size distribution (see Section \ref{section:comparing_skewness_and_kurtosis_of_effect_size_distribution} for additional details).
+\end{itemize}
+\item \textbf{An HTML report} (\emph{main.html} file) combines both textual and graphical output, allowing the user to easily surfing across the results and across the studies included in the QC analysis.
+In operating systems allowing graphical interfaces, the \emph{HTML} document should be the first file to be opened to investigate the results.
+\end{enumerate}
+
+\section{Example}
+This is an embedded R code example. All input files for this example are located in the subdirectory \emph{doc} of the installed \emph{GWAtoolbox} package.
+
+Consider the following five GWAS data files: \emph{gwa\_data\_example\_1.txt}, \emph{gwa\_data\_example\_2.tbl}, \emph{gwa\_data\_example\_3.csv}, \emph{gwa\_data\_example\_4.txt} and \emph{gwa\_data\_example\_5.csv}. 
+The first file contains 16 whitespace-separated columns:
+<<>>=
+t <- read.table("gwa_data_example_1.txt", header = T, nrow = 1, sep = " ")
+colnames(t)
+@
+The second file contains 16 tab-separated columns:
+<<>>=
+t <- read.table("gwa_data_example_2.tbl", header = T, nrow = 1, sep = "\t")
+colnames(t)
+@
+Analogously, we can preview the headers of the other three files.
+To perform the QC of these files we prepare a simple input script: \emph{GWAS\_script.txt}. 
+Below are listed the commands which were inlcuded in the script:
+<<>>=
+cat(readLines("GWASQC_script.txt"), sep = "\n")
+@
+When the input script is ready, load the \emph{GWAtoolbox} library and call the \emph{gwasqc()} function as follows: 
+<<results=hide>>=
+library(GWAtoolbox)
+gwasqc("GWASQC_script.txt")
+@
+
+\section{Between-study comparisons}
+\subsection{Comparing skewness and kurtosis of effect size distribution}
+\label{section:comparing_skewness_and_kurtosis_of_effect_size_distribution}
+Association of genetic markers with continuous or binary phenotypes is generally assessed by the use of linear models, where an effect estimate and its standard error are used to summarize the evidence of the association.
+The effect estimate is usually represented by the beta coefficient of  the linear regression model.
+For binary outcome, this correspond to the log(odds ratio) obtained from logistic regression models.
+Let's define with $\theta$ our parameter of interest, and with $SE(\theta)$ its standard error.
+For large sample sizes, under the null hypothesis of no association, the distribution of $\theta/SE(\theta) \sim N(0,1)$.
+
+In checking the quality of GWA results, we are interested in assessing potential errors arisen during the analytical process or during the file management process.
+These errors could origin $\theta/SE(\theta)$ distributions that are systematically biased towards positive (or negative) values, or that are over/under-dispersed.
+The \emph{kurtosis} and the \emph{skewness} indices are the natural candidates to perform this kind of assessment.
+Convenient graphical display based on these two indices enables the contemporary plot and comparison of all the studies involved in the meta-analysis, with consequent identification of studies that are systematically different from each other.
+
+Under the forms proposed by Cramer \cite{Cramer46}, the kurtosis and the skewness indices can be defined as
+$ku=\frac{\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^4}{\big(\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^2\big)^2}-3$
+and
+$sk=\frac{\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^3}{\big(\frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})^2\big)^\frac{3}{2}}$.
+The skewness index assesses the symmetry of a distribution around its central value, and the kurtosis index assesses the dispersion of the distribution around its central value.
+If $\theta/SE(\theta) \sim N(0,1)$, then for large sample sizes, $sk_\theta=sk\big(\theta/SE(\theta)\big) \rightarrow 0$ and $ku_\theta=ku\big(\theta/SE(\theta)\big) \rightarrow 0$ (Fisher \cite{Fisher30}; Joanes and Gill \cite{Joanes98}).
+
+In a GWAS setting, we can assume that the 50\% of SNPs with largest p-value are not associated with the phenotype of interest and so, they can be used to represent the null situation.
+Notice that the 50\% of SNPs with worst p-values correspond to the concept of the genomic control inflation factor, which is estimated based on the median chi-square distribution from the p-values.
+
+In real world applications, distribution of $\theta/SE(\theta)$ for 50\% worst SNPs is not normally distributed, because SNPs are not independent each other.
+This situation is more pronounced in presence of genotype imputation, which causes an excess of effect estimetes that are close to 0.
+For this reason, it is not realistic to expect that $ku_\theta \rightarrow 0$: the distribution is leptokuric, and so $ku_\theta > 0$.
+However, as long as the studies involved in the meta-analysis used similar imputation reference platforms, $ku_\theta$ should be similar for all studies.
+For what concerns the skewness, there is no good reason why $sk_\theta$ of the 50\% worst SNPs shouldn't approximate $0$.
+
+Then, for given $K$ studies, we can estimate $ku_{\theta,k}$ and $sk_{\theta,k}$ for $k = 1, \dots, K$, and we can plot the two vectors $sk_{\theta,[1,\dots,K]}$ vs. $ku_{\theta,[1,\dots,K]}$ in a Cartesian diagram, with every point representing a different study.
+We expect all studies to cluster around the same point at $sk=0$, with similar kurtosis values.
+Studies that show strong departures from the main cluster could be submitted to detailed investigation in order to detect the reason of such discrepancy.
+In general, departures along the $sk$-axis are more serious than departures on the $sk$-axis, because the first ones will introduce systematic bias in the meta-analysis with one or a few studies that are systematically different from the others, with effect estimates that are more often in one direction.
+
+This diagnostic plot is shown in Figure \ref{fig:kusk_check} where the set of SNPs with 50\% largest p-values is compared with other sets of SNPs with the largest 75\%, 95\%, and 100\% (i.e. all SNPs are considered) p-values, respectively.
+Highlighted are points (studies) that are largely difference from the ones in the cluster.
+In the last scenario, all SNPs are included and the bias is given by the SNPs that are truly associated with the phenotype. 
+Outlier studies, that have been identified in the 50\% scatterplot, are colored in red also in the other situations for comparison.
+\begin{figure}[!h]
+\centering
+\includegraphics[type=png, ext=.png, read=.png, width=\textwidth]{kusk_check_try}
+\caption{The skewness and kurtosis plot.}
+\label{fig:kusk_check}
+\end{figure} 
+
+The \emph{GWAtoolbox} allows automatic comparison of skewness and kurtosis of effect size distribution between GWA studies.
+The \emph{gwasqc()} function estimates the skewness and kurtosis statistics during the QC workflow and includes them into the \emph{CSV} reports. 
+Then, the auxiliary \emph{kusk\_check()} function can be used to export this information to a \emph{R} data frame and to produce diagnostic plots.
+As input, it requires the same script used for \emph{gwasqc()} and assumes that all the \emph{CSV} reports are located in the current working directory.
+An optional list consisting of any of integer number among 50, 75, 95, 99, and 100, can be specified: numbers correspond to the percentage of SNPs to be considered as representing the null distribution.
+
+\begin{example}
+We report the commands to obtain the scatterplot shown in Figure \ref{fig:kusk_check}, when the 50\% SNPs with largest p-values is considered.  
+<<results=hide>>=
+W <- kusk_check("GWASQC_script.txt", worst = c(50), plot = TRUE)
+points(W$sk50[W$ku50 > 5], W$ku50[W$ku50 > 5], pch = 22, bg = 2, cex = 2)
+text(W$sk50[W$ku50 > 5], W$ku50[W$ku50 > 5], labels = W$study[W$ku50 > 5], cex = 1, pos = 4)
+@
+\end{example} 
+
+Currently, no automatic method to identify outlier studies is implemented and that the user needs to define his/her own criteria for the outlier identificaton.\\
+
+\subsection{Precision of the effect estimates by sample size}
+\label{section:effect_estimates_precision_by_sample_size}
+A different graphical test, that allows the comparison of studies against each other, is based on the assessment of the distribution of estimates' precision vs. study sample size.
+In general, the average $SE(\theta)$ is expected to be inversely proportional to the study sample size.
+The auxiliary \emph{dispersion\_check()} function plots a scatterplot of the $mean(SE(\theta))$ vs. the median sample size of all studies, as depicted in the example Figure \ref{fig:dispersion_check}.
+Over-dispersion is defined as the presence of larger SEs than expected given the study sample size and under-dispersion is meant to be the opposite phenomenon.
+For example, a study with unmodeled relatedness or population stratification may present SEs that are smaller than another study of similar sample size where these issues were accounted for properly. 
+\begin{figure}[!ht]
+\centering
+\includegraphics[type=png, ext=.png, read=.png, width=\textwidth]{dispersion}
+\caption{Schematic representation of the dispersion plot and its interpretation.}
+\label{fig:dispersion_check}
+\end{figure} 
+
+The \emph{dispersion\_check()} function uses the \emph{CSV} reports generated by \emph{gwasqc()}.
+As input it requires the same script as \emph{gwasqc()} and assumes that all the \emph{CSV} reports files are located in the current working directory.
+If the study sample size is missing from GWAS files, then the function has an optional parameter allowing to specify a vector with all study sample sizes.
+The function returns an \emph{R} data frame with the information extracted from the \emph{CSV} reports and produces the diagnostic plot.
+
+\begin{example}
+<<results=hide>>=
+Z <- dispersion_check("GWASQC_script.txt", plot=TRUE)
+@
+<<>>=
+Z
+@
+<<results=hide>>=
+text(Z$median_n, Z$mean_se, labels=Z$study, pos=c(2,4,2,1,2))
+@
+<<results=hide>>=
+Z <- dispersion_check("GWASQC_script.txt", sample_sizes=c(1200, 200, 1000, 500, 700), plot=TRUE)
+@
+<<>>=
+Z
+@
+<<results=hide>>=
+text(Z$median_n, Z$mean_se, labels=Z$study, pos=c(2,4,2,1,2))
+@
+\end{example} 
+
+\section{Additional Tools}
+In addition to the facilities for the data QC, \emph{GWAtoolbox} also includes facilities including routines for the data manipulation after the GWAS meta-analysis has been done and functions that facilitates result annotation.
+These extensions are currently being debugged and will be made available soon.
+
+%\subsection{Skewness and Kurtosis Check}
+%\label{section:skewness_and_kurtosis_check}
+%The skewness and kurtosis of standardized effects are calculated during the automatic quality check procedure and reported in CSV output files for every study.
+%In particular, all markers are ranked based on $\chi^2_1$ statistics of $\frac{Effect}{SE}$.
+%Then, the skewness and kurtosis of effects are calculated for 100\%, 99\%, 95\%, 75\% and 50\% of the worst markers.
+%Finally, the results are reported in the CSV report in the columns \emph{STD\_EFFECT\_1}, \emph{STD\_EFFECT\_0.99}, \emph{STD\_EFFECT\_0.95}, \emph{STD\_EFFECT\_0.75} and \emph{STD\_EFFECT\_0.5}, respectively.
+
+%To facilitate the usage of the QC results and enable further comparison of skewness and kurtosis of standardized effects between studies, the \emph{GWAtoolbox} provides an auxiliary funcion \emph{kusk\_check()}.
+%For a given list of studies after QC it automatically extracts the skewness and kurtosis values from the generated CSV reports to the \emph{R} data frame.
+%Later, an analyst may use the data frame to create customized comparison reports and plots.
+%The default skewness and kurtosis comparison report, produced with \emph{kusk\_check()} function, constists of plots depicted on Figure \ref{fig:kusk}.
+%\begin{figure}[!ht]
+%\centering
+%\includegraphics[type=jpg, ext=.jpg, read=.jpg, width=0.7\linewidth]{kusk_plot}
+%\caption{The skewness and kurtosis plot.}
+%\label{fig:kusk}
+%\end{figure}
+
+\begin{thebibliography}{9}
+
+\bibitem{Willer10}
+Cristen J. Willer, Yun Li, and Gon\c{c}alo R. Abecasis. (2010) \textbf{METAL: fast and efficient meta-analysis of genomewide association scans}. Bioinformatics 26: 2190-2191.
+
+\bibitem{Bakker08}
+Paul I.W. de Bakker, Manuel A.R. Ferreira, Xiaoming Jia, Benjamin M. Neale, Soumya Raychaudhuri, and Benjamin F. Voight (2008) \textbf{Practical aspects of imputation-driven meta-analysis of genome-wide association studies}. Hum. Mol. Genet. 17: R122-R128.
+
+\bibitem{Cramer46}
+H. Cramer (1946) \textbf{Mathematical Methods of Statistics}. Princeton: Princeton University Press.
+
+\bibitem{Fisher30}
+R.A. Fisher (1930) \textbf{The moments of the distribution for normal samples of measures of departure from normality}. Proc. R. Soc. Series A 130:16-28.
+
+\bibitem{Joanes98}
+D.N. Joanes, C.A. Gill (1998) \textbf{Comparing Measures of Sample Skewness and Kurtosis}. J. Royal Stat. Soc. Series D (The Statistician) 47(1):183-189.
+
+\end{thebibliography}
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{Index}
+\printindex
+
+\end{document}
