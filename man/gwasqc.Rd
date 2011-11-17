@@ -21,7 +21,6 @@
 	}
 	The QC is applied first to \file{input_file_1.txt} and then to \file{input_file_2.csv}.
 }
-
 \section{Field Separator}{
 	The field (column) separator can be different for each GWAS data file. 
 	\code{gwasqc()} automatically detects the separator field for each input file \emph{based on the first 10 rows}. 
@@ -45,7 +44,6 @@
 	For the input file \file{input_file_1.txt} the field separator is determined automatically by the program but, 
 	for the input files \file{input_file_2.csv} and \file{input_file_3.txt} the separator is manually set to tabulation by the user.
 }
-
 \section{Missing Values}{
 	By default, \code{gwasqc()} assumes that missing values are labeled as \emph{NA}. 
 	However, the label for missing value can be specified manually by the user with the command \bold{MISSING}.
@@ -60,7 +58,6 @@
 	The \emph{hyphen} symbol identifies missing values in the input file \file{input_file_1.txt} and \emph{NA} identifies 
 	missing values in the input file \file{input_file_2.txt}.
 }
-
 \section{Column Names}{
 	In the table below, the complete list of the default column names for the GWAS data file is reported. 
 	These names identify uniquely the items in the GWAS data file.
@@ -84,7 +81,8 @@
 		CALLRATE\tab Genotype callrate\cr
 		N\tab Sample size\cr
 		USED_FOR_IMP\tab Label value indicating if a marker\cr
-		\tab was used for imputation (1) or not (0)
+		\tab was used for imputation (1) or not (0)\cr
+		AVPOSTPROB\tab Average posterior probability for imputed marker allele dosage
 	}
 	Given that different names can be provided for each GWAS data file, \code{gwasqc()} allows to redefine the default values for 
 	every input file in the input script. 
@@ -94,9 +92,9 @@
 	
 	Example 1:
 
-	Let's assume to have two input files, \file{input_file_1.txt} and \file{input_file_2.txt}. 
+	Let's assume to have two input files, \file{input_file_1.txt} and \file{input_file_2.csv}. 
 	In the \file{input_file_1.txt}, the column names for effect size and standard error are \emph{beta} and \emph{SE}, respectively. 
-	In the \file{input_file_2.txt}, the column name for the effect size is the same as in \file{input_file_1.txt}, but the column name 
+	In the \file{input_file_2.csv}, the column name for the effect size is the same as in \file{input_file_1.txt}, but the column name 
 	for the standard error is \emph{STDERR}. 
 	The correct column redefinition is as follows:
 	\tabular{l}{
@@ -117,7 +115,6 @@
 		PROCESS   input_file_1.txt
 	}
 }
-
 \section{Case Sensitivity}{
 	By default the \code{gwasqc()} assumes that column names in the input files are case insensitive. 
 	For example, the column names \emph{STDERR}, \emph{StdErr}, and \emph{STDErr} are all perfectly equivalent.
@@ -139,7 +136,6 @@
 		PROCESS         input_file_2.csv 
 	}	
 }
-
 \section{Filter for Implausible Values}{
 	Often, there is the necessity to identify implausible values, to exclude unreliable results from the meta-analysis. 
 	Implausible values can happen due to data sparseness, errors in the data handling, or other causes.
@@ -178,7 +174,6 @@
 	For the file \file{input_file_2.csv} the thresholds of [0, 100000] will be applied to the standard error column, 
 	while for the imputation quality column the same filters as for the \file{input_file_1.txt} will be applied.	
 }
-
 \section{High Quality Filters}{
 	SNPs with low imputation quality and with too small minor allele frequency (MAF) could make spuriously small p-values happen.
 	Checking for the presence of cryptic relatedness or hidden population sub-structure through the estimation of the inflation 
@@ -191,7 +186,7 @@
 		FREQLABEL\tab > 0.01\cr
 		IMP_QUALITY\tab > 0.3
 	}
-        The default values can be redefined using the command \bold{HQ_SNP} for every input file in the input script. 
+    The default values can be redefined using the command \bold{HQ_SNP} for every input file in the input script. 
 	The command is followed by two values: the first one corresponds to the threshold for the minor allele frequency, 
 	and the second one corresponds to the threshold for the imputation quality.
 
@@ -203,7 +198,6 @@
 		PROCESS    input_file_1.txt
 	}	
 }
-
 \section{Plotting Filter}{
 	The plotting filter is used to select appropriate data for the various summary plots. 
 	The filter has two threshold levels and each of them is applied dependently on the plot type and column. 
@@ -226,7 +220,6 @@
 	There is a first level of filters which selects SNPs with MAF > 0.02 and the imputation quality > 0.3, and a second, higher, 
 	level filter which selects SNPs with MAF > 0.03 and imputation quality > 0.5.
 }
-
 \section{Output File Name}{
 	For both text and graphic output files, the output file names are created by adding a prefix to the input file names.	
 	The prefix is specified with the command \bold{PREFIX}. 
@@ -242,7 +235,6 @@
 	All the output files corresponding to the input files \file{input_file_1.txt} and \file{input_file_2.csv} will be prefixed with \emph{res_}; 
 	the output files corresponding to the input file \file{input_file_3.tab} will be prefixed with \emph{result_}.
 }
-
 \section{Verbosity Level}{
 	The command \bold{VERBOSITY} allows to control the number of output figures, as described below:	
 	\tabular{ll}{
@@ -259,7 +251,6 @@
 		PROCESS         input_file_2.csv 
 	}
 }
-
 \section{Number And Content Of Plots}{
 	Number and content of the output plots depend on the setting of the plotting filter and on the available columns in the input file. 
 	If some dependency is not satisfied because of missing columns or some filter setting, 
@@ -289,7 +280,6 @@
 	The width of the boxplots will be based on the study sample sizes, which is reported with different names in the two input files.
 	The labels "first" and "second" will be used to identify the two studies in the plots.
 }
-
 \section{The Output Files}{
 	\code{gwasqc()} produces 4 types of files:
 	\enumerate{
@@ -300,11 +290,10 @@
 		of all the output in a hypertext browser.
 	}
 }
-
 \author{Daniel Taliun, Christian Fuchsberger, Cristian Pattaro}
 \keyword{misc}
 \keyword{utilities}
-\keyword{dplot}
+\keyword{plot}
 \keyword{package}
 \examples{
 	\dontshow{

@@ -1,5 +1,5 @@
 #
-# Copyright Â© 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+# Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
 #
 # This file is part of GWAtoolbox.
 #
@@ -17,51 +17,71 @@
 # along with GWAtoolbox.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# The GSL_LIBS variable points to the directory with GSL libraries.
-# The GSL_INCL variable points to the directory with GSL headers.
+PKG_LIBS = $(GWALIBS)
 
-GSL_LIBS = -L/usr/lib -lgsl -lgslcblas -lm
-GSL_INCL = -I/usr/include
-
-PKG_LIBS = $(GWALIBS) $(GSL_LIBS)
-PKG_CXXFLAGS = $(GSL_INCL)  
+PKG_CFLAGS =
+PKG_CPPFLAGS = 
+PKG_CXXFLAGS =
 
 R_MAKECONF = $(R_HOME)/etc${R_ARCH}/Makeconf
 
-GWASUBDIRS = 	expressions \
-				metas \
-				plots \
-				file \
-				annotation \
-				analyzer \
-				comparator
+ifneq ($(strip $(wildcard ${HOME}/.R/Makevars-${R_PLATFORM})),)
+	R_MAKECONF += ${HOME}/.R/Makevars-${R_PLATFORM}
+else
+ifneq ($(strip $(wildcard ${HOME}/.R/Makevars.win)),)
+	R_MAKECONF += ${HOME}/.R/Makevars.win
+else
+ifneq ($(strip $(wildcard ${HOME}/.R/Makevars.win64)),)
+	R_MAKECONF += ${HOME}/.R/Makevars.win64
+else
+ifneq ($(strip $(wildcard ${HOME}/.R/Makevars)),)
+	R_MAKECONF += ${HOME}/.R/Makevars 
+endif
+endif
+endif	
+endif
 
-GWALIBS = 	libs/analyzer/*.o \
-			libs/annotation/*.o \
-			libs/comparator/*.o \
-			libs/expressions/*.o \
-			libs/file/*.o \
-			libs/metas/*.o \
-			libs/plots/*.o	
+GWADIRS = 	auxiliary \
+			exception \
+			bitarray \
+			reader \
+			descriptor \
+			gwafile \
+			gwasformat/libs/columns \
+			gwasformat/libs/formatter \
+			gwasqc/libs/expressions \
+			gwasqc/libs/metas \
+			gwasqc/libs/plots \
+			gwasqc/libs/analyzer
+
+GWALIBS = 	auxiliary/*.o \
+			exception/*.o \
+			bitarray/*.o \
+			reader/*.o \
+			descriptor/*.o \
+			gwafile/*.o \
+			gwasformat/libs/columns/*.o \
+			gwasformat/libs/formatter/*.o \
+			gwasqc/libs/expressions/*.o \
+			gwasqc/libs/metas/*.o \
+			gwasqc/libs/plots/*.o \
+			gwasqc/libs/analyzer/*.o
 			
-
 .PHONY: all gwalibs
      
 all: $(SHLIB)
 $(SHLIB): gwalibs
 
 gwalibs:	subclean
-			@for gwadir in $(GWASUBDIRS); do \
-				(cd libs/$${gwadir} &&  PKG_CXXFLAGS="$(PKG_CXXFLAGS)"  R_MAKECONF="$(R_MAKECONF)" $(MAKE) gwalib) || exit 1; \
+			@for gwadir in $(GWADIRS); do \
+				(cd $${gwadir} && PKG_CFLAGS="$(PKG_CFLAGS)" PKG_CPPFLAGS="$(PKG_CPPFLAGS)" PKG_CXXFLAGS="$(PKG_CXXFLAGS)" R_MAKECONF="$(R_MAKECONF)" $(MAKE) gwalib) || exit 1; \
 			done
 			
 subclean:
 	@-rm -f $(SHLIB)
-	@for gwadir in $(GWASUBDIRS); do \
-		(cd libs/$${gwadir} && R_MAKECONF="$(R_MAKECONF)" $(MAKE) clean) || exit 1; \
+	@for gwadir in $(GWADIRS); do \
+		(cd $${gwadir} && R_MAKECONF="$(R_MAKECONF)" $(MAKE) clean) || exit 1; \
 	done
 
 clean: subclean
 	@-rm -f *.o
-	
-	

@@ -1,0 +1,56 @@
+# Rename columns
+RENAME	SNPID	rsId
+RENAME	chr	chrom
+RENAME	position	bp
+RENAME	SE	StdErr
+RENAME	pval	p-value
+RENAME	p	p-value
+RENAME	pvalue	p-value
+
+# Column names: specify the meaning of every column in the input file
+ALLELE		coded_all noncoded_all
+CALLRATE 	callrate
+CHR		chrom
+EFFECT 		beta
+FREQLABEL 	AF_coded_all 
+HWE_PVAL 	HWE_pval
+IMPUTED 	imputed
+IMP_QUALITY 	oevar_imp
+MARKER		rsId
+N 		n_total
+POSITION 	bp
+PVALUE 		p-value
+STRAND 		strand_genome
+STDERR 		StdErr
+USED_FOR_IMP 	used_for_imp
+AVPOSTPROB	avpostprob
+
+# Prefix for output files
+PREFIX	gwasformat_
+
+# Enable computation of inflation factor and genomic control
+GC	ON
+
+# Set filters on minor allele frequency and imputation quality
+HQ_SNP	0.05 0.4
+
+# Enable column re-ordering and specify the order explicitely
+ORDER	ON	chrom bp rsId strand_genome coded_all noncoded_all AF_coded_all callrate HWE_pval imputed used_for_imp avpostprob oevar_imp n_total n_total_effective p-value p-value_gc beta StdErr StdErr_gc 
+
+# Input file and its short name for labels
+PROCESS gwa_data_example_1.txt Study1
+
+# Enable column re-ordering based on the alphabetical ordering
+ORDER	ON
+
+# Disable filters
+HQ_SNP	0 0
+
+PROCESS gwa_data_example_2.tbl Study2
+PROCESS gwa_data_example_3.csv Study3
+
+# Disable column re-ordering
+ORDER	OFF
+
+PROCESS gwa_data_example_4.txt Study4
+PROCESS gwa_data_example_5.csv Study5

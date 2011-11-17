@@ -1,8 +1,8 @@
 body {
 	height: 100%;
-	background-color: #B5D4E3;
+	background-color: #F1E5BF;
 	margin: 0px;
-	padding: 0px; 
+	padding: 0px;
 }
 
 div.panel {
@@ -14,36 +14,36 @@ div.panel {
 	border-right-width: 1px;
 	border-bottom-width: 0px;
 	border-style: solid;
-	border-color: #90BED5;
+	border-color: #C4A375;
 	overflow: auto;
 }
 
 a:link {
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;	
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	text-decoration: none;
-	color: #039;
+	color: #000;
 }
 
 a:visited {
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;	
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	text-decoration: none;
-	color: #039;
+	color: #000;
 }
 
 a:hover {
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;	
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	text-decoration: none;
-	color: #FFF;	
+	color: #6E281C;
 }
 
 a:active {
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;	
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	text-decoration: none;
-	color: #FFF;	
+	color: #6E281C;
 }
 
 h1 {
@@ -61,8 +61,8 @@ div.menu {
 }
 
 hr {
-	color: #90BED5;
-	background-color: #90BED5; 
+	color: #C4A375;
+	background-color: #C4A375;
 	height: 1px;
 	border: 0px;
 }

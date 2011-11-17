@@ -1,0 +1,40 @@
+# Column names
+ALLELE		coded_all noncoded_all
+CALLRATE 	callrate
+CHR		chr
+EFFECT 		beta
+FREQLABEL 	AF_coded_all 
+HWE_PVAL 	HWE_pval
+IMPUTED 	imputed
+IMP_QUALITY 	oevar_imp
+MARKER		SNPID
+N 		n_total
+POSITION 	position
+PVALUE 		pval
+STRAND 		strand_genome
+STDERR 		SE
+USED_FOR_IMP 	used_for_imp
+
+# Plotting filters for the MAF and imputation quality
+MAF 0.01    0.05
+IMP 0.3     0.5
+
+# Prefix for output files
+PREFIX	pgwasqc_
+
+# Column N controls the width of boxplots
+BOXPLOTWIDTH	N
+
+# Input file and its short name for labels
+PROCESS gwa_data_example_1.txt Study1
+
+PVALUE		p
+STDERR		StdErr
+
+PROCESS gwa_data_example_2.tbl Study2
+PROCESS gwa_data_example_3.csv Study3
+
+PVALUE		pvalue
+
+PROCESS gwa_data_example_4.txt Study4
+PROCESS gwa_data_example_5.csv Study5

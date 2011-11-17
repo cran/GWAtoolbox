@@ -20,7 +20,7 @@ MAF 0.01    0.05
 IMP 0.3     0.5
 
 # Prefix for output files
-PREFIX	res_
+PREFIX	gwasqc_
 
 # Column N controls the width of boxplots
 BOXPLOTWIDTH	N
