@@ -84,7 +84,7 @@
 					paths <- c(paths, paste(names[[i]], ".png", sep=""))
 					png(tail(paths, 1), height=600, width=1200)
 					par(mar=c(8,5,2,1), las=3)
-					bxp(bxp_obj, width=widths, main=title, frame.plot=FALSE)
+					suppressWarnings(bxp(bxp_obj, width=widths, main=title, frame.plot=FALSE))
 					abline(0,0, lty=2)
 					dev.off()
 				}	

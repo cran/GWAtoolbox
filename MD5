@@ -1,5 +1,5 @@
 d32239bcb673463ab874e80d47fae504 *COPYING
-7153e0e06617e306bc7121efad6ec7bb *DESCRIPTION
+76168ae0ef5c2e66e2d58eb1e9ec3833 *DESCRIPTION
 4e0183501f9113c2119e4a408c0ff6fc *NAMESPACE
 443955d5e492b8846694342531fadd8c *R/DISPERSION_CHECK.R
 cfd27e08267eb26153f7783505f9b869 *R/GWASFORMAT.R
@@ -7,12 +7,12 @@ be0cd5016b45b3bf8b5fe085e3a79f8d *R/GWASQC.R
 80b1e04454acc36fa63d5b75ffee4c9e *R/KUSK_CHECK.R
 fdde7fe699cca04a208ca83cab1e2c73 *R/PGWASFORMAT.R
 90f547537189b73de61516a3a9cf84f4 *R/PGWASQC.R
-962a20641480b1da0b9e854b7dd7fd5a *R/PLOT.R
-448d86d66f4f4b9f4897db368eb0c4af *R/PLOT_COMBINED_BOXPLOTS.R
+c0c96ec712c36bed25ba8b2bbbeee878 *R/PLOT.R
+67e63bcababb3b2b473f392432741d5b *R/PLOT_COMBINED_BOXPLOTS.R
 3e44febf9c3186ed203560fbb71cca32 *inst/doc/GWASFORMAT_script.txt
 7251d2c84157e64b0afe06d30f0c11f1 *inst/doc/GWASQC_script.txt
 bddceac9813ca0934041b951bc50404a *inst/doc/GWAtoolbox.Rnw
-a846350150654137b36e56420c840fda *inst/doc/GWAtoolbox.pdf
+07abb40269f0cff2c68abe7f48e6af9a *inst/doc/GWAtoolbox.pdf
 07768f94f3909cae6807d6217b13da1a *inst/doc/PGWASFORMAT_script.txt
 749001aa7be3f3a38036e13571f1bc31 *inst/doc/PGWASQC_script.txt
 4903ac54c31c6071a9f807faad3cda74 *inst/doc/dispersion.png
@@ -36,7 +36,7 @@ ca41795eb60162b8b25004f14d68f776 *man/pgwasqc.Rd
 2bdbfdae7b1191d798fd433e5d30cbdd *src/GWAtoolbox.cpp
 30950b5274baf3ac35d60527b0d7b69a *src/Makevars
 77d92cc0f56eb22708291b3dd090f75c *src/auxiliary/Makefile
-9f38ca732fead8b987579c07ab5edd26 *src/auxiliary/auxiliary.cpp
+be63a68ef71eb56aa1025a55bf55043d *src/auxiliary/auxiliary.cpp
 4c10da5f44065132a3ca7bada5061024 *src/auxiliary/include/auxiliary.h
 c8df779b7569e7d1184a15460e49d8eb *src/bitarray/BitArray.cpp
 338d877364b4b99d7ad46c4ad936e253 *src/bitarray/BitArrayException.cpp
@@ -99,7 +99,7 @@ b31a44af804d9ae0bbe41eb312e9facc *src/gwasqc/include/metas/MetaImplausibleStrict
 80cfe8f42fd67d15fe7dee76ddc6f037 *src/gwasqc/include/plots/PlotException.h
 e3d77d072f3350f874c50f203d9d2330 *src/gwasqc/include/plots/Plottable.h
 da96b163c16c6cc7b890f13e9332f3de *src/gwasqc/include/plots/Qqplot.h
-a426a5152aba91943302f6e39f5359dd *src/gwasqc/libs/analyzer/Analyzer.cpp
+d542b8f4a63caf2f7d94cbc94ef0f044 *src/gwasqc/libs/analyzer/Analyzer.cpp
 32520863de5e03bf4794159df3ab4a40 *src/gwasqc/libs/analyzer/AnalyzerException.cpp
 ab95734467c9a210e8f0d6ad1fbf651f *src/gwasqc/libs/analyzer/Makefile
 e992f36c65951ce31dfb51522ab14787 *src/gwasqc/libs/expressions/Conjunction.cpp
@@ -123,7 +123,7 @@ f348469e51e338e873a217edb0c0ef1e *src/gwasqc/libs/metas/MetaImplausible.cpp
 a8c16d8929eba3d4c5e1b7df6ddfb8c1 *src/gwasqc/libs/metas/MetaNumeric.cpp
 4c985a4daa09b048c08344c5b894d586 *src/gwasqc/libs/metas/MetaRatio.cpp
 6f38941341c14e6bc1262c024dafcde1 *src/gwasqc/libs/metas/MetaUniqueness.cpp
-8c6b94780b77c339a84ac520ba62b2eb *src/gwasqc/libs/plots/Boxplot.cpp
+823a72ef26acaee1d60db83399c43b86 *src/gwasqc/libs/plots/Boxplot.cpp
 f7fbefaf48452c20c8babb6e20fa9663 *src/gwasqc/libs/plots/Histogram.cpp
 44e02ad7460a7f777905fe0de644ed73 *src/gwasqc/libs/plots/Makefile
 91355f424c1db6de0960fe7a5fa70e8e *src/gwasqc/libs/plots/Plot.cpp

@@ -114,8 +114,7 @@ Boxplot* Boxplot::create(const char* name, double* sorted_data, int data_size, d
 	if (data_size % 2 == 0) {
 		lower_q_position = (double)(data_size + 2) / 4;
 		upper_q_position = (double)(3 * data_size + 2) / 4;
-	}
-	else {
+	} else {
 		lower_q_position = (double)(data_size + 3) / 4;
 		upper_q_position = (double)(3 * data_size + 1) / 4;
 	}
@@ -124,8 +123,7 @@ Boxplot* Boxplot::create(const char* name, double* sorted_data, int data_size, d
 
 	if ((int)integer == data_size) {
 		boxplot->tukey[1] = sorted_data[(int)integer - 1];
-	}
-	else {
+	} else {
 		boxplot->tukey[1]  = (1 - fraction) * sorted_data[(int)integer - 1] + fraction * sorted_data[(int)integer];
 		if (isnan(boxplot->tukey[1])) {
 			boxplot->tukey[1] = sorted_data[(int)integer - 1];
@@ -136,8 +134,7 @@ Boxplot* Boxplot::create(const char* name, double* sorted_data, int data_size, d
 
 	if ((int)integer == data_size) {
 		boxplot->tukey[3] = sorted_data[(int)integer - 1];
-	}
-	else {
+	} else {
 		boxplot->tukey[3] = (1 - fraction) * sorted_data[(int)integer - 1] + fraction * sorted_data[(int)integer];
 		if (isnan(boxplot->tukey[3])) {
 			boxplot->tukey[3] = sorted_data[(int)integer - 1];
@@ -159,8 +156,7 @@ Boxplot* Boxplot::create(const char* name, double* sorted_data, int data_size, d
 	/* Set lower whisker */
 	if (lower_outliers_cnt < data_size) {
 		boxplot->tukey[0] = sorted_data[lower_outliers_cnt];
-	}
-	else {
+	} else {
 		boxplot->tukey[0] = sorted_data[data_size - 1];
 	}
 
@@ -174,8 +170,7 @@ Boxplot* Boxplot::create(const char* name, double* sorted_data, int data_size, d
 	/* Set upper whisker */
 	if (upper_outliers_cnt >= 0) {
 		boxplot->tukey[4] = sorted_data[upper_outliers_cnt];
-	}
-	else {
+	} else {
 		boxplot->tukey[4] = sorted_data[0];
 	}
 
@@ -216,7 +211,6 @@ Boxplot* Boxplot::create(const char* name, double* sorted_data, int data_size, d
 				new_outliers_cnt += 1;
 				previous_value = sorted_data[i];
 			}
-
 			i += 1;
 		}
 
@@ -226,11 +220,10 @@ Boxplot* Boxplot::create(const char* name, double* sorted_data, int data_size, d
 				new_outliers_cnt += 1;
 				previous_value = sorted_data[data_size - upper_outliers_cnt + i];
 			}
-
 			i += 1;
 		}
 
-		/* Copy non-overlapping outliers. Intuitively the check for > 0 is not neccessary, however we keep it. */
+		/* Copy non-overlapping outliers. Intuitively the check for > 0 is not necessary, however we keep it. */
 		if (new_outliers_cnt > 0) {
 			if ((boxplot->outliers = (double*)malloc(new_outliers_cnt * sizeof(double))) == NULL) {
 				throw PlotException("Boxplot", "Boxplot* create( const char*, double*, int, double )", __LINE__, 2, new_outliers_cnt * sizeof(double));
@@ -239,23 +232,21 @@ Boxplot* Boxplot::create(const char* name, double* sorted_data, int data_size, d
 			previous_value = -numeric_limits<double>::infinity();
 			i = 0;
 			while (i < lower_outliers_cnt) {
-				if (sorted_data[i] > previous_value + delta) {
+				if (sorted_data[i] >= previous_value + delta) {
 					boxplot->outliers[j] = sorted_data[i];
 					j += 1;
 					previous_value = sorted_data[i];
 				}
-
 				i += 1;
 			}
 
 			i = 0;
 			while (i < upper_outliers_cnt) {
-				if (sorted_data[data_size - upper_outliers_cnt + i] > previous_value + delta) {
+				if (sorted_data[data_size - upper_outliers_cnt + i] >= previous_value + delta) {
 					boxplot->outliers[j] = sorted_data[data_size - upper_outliers_cnt + i];
 					j += 1;
 					previous_value = sorted_data[data_size - upper_outliers_cnt + i];
 				}
-
 				i += 1;
 			}
 

@@ -109,23 +109,27 @@
 					
 					if (length(boxplots[[j]][[1]]$out) == 0) {
 						x <- c(low_whisker, up_whisker)
-					} else {      
-						min_out <- min(boxplots[[j]][[1]]$out)
-						max_out <- max(boxplots[[j]][[1]]$out)    
+					} else {   
+						outliers <- boxplots[[j]][[1]]$out[!is.infinite(boxplots[[j]][[1]]$out) & !is.nan(boxplots[[j]][[1]]$out) & !is.na(boxplots[[j]][[1]]$out)]
 						
-						min_x <- min(min_out, max_out, low_whisker, up_whisker)
-						max_x <- max(min_out, max_out, low_whisker, up_whisker)
+						if (length(outliers) == 0) {
+							min_x <- low_whisker
+							max_x <- up_whisker
+						} else {
+							min_x <- min(outliers)
+							max_x <- max(outliers)
+						}
 						
 						if (abs(min_x) > abs(max_x)) {
 							x <- c(min_x, abs(min_x))
-							quantiles <- append(quantiles, round(abs(min_x), 3))
+							quantiles <- append(quantiles, round(x, 3))
 						} else {
 							x <- c(-max_x, max_x)
-							quantiles <- append(quantiles, round(-max_x, 3))         
+							quantiles <- append(quantiles, round(x, 3))         
 						}
 					}
 					
-					bxp(boxplots[[j]][[1]], horizontal = TRUE, main = boxplots[[j]][[4]], axes = FALSE, boxfill = 3, ylim = x)
+					suppressWarnings(bxp(boxplots[[j]][[1]], horizontal = TRUE, main = boxplots[[j]][[4]], axes = FALSE, boxfill = 3, ylim = x))
 					axis(1, at = quantiles, lab = quantiles)  
 				}
 				

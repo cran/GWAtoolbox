@@ -161,5 +161,11 @@ double auxiliary::stats_quantile_from_sorted_data(double* data, unsigned int siz
 	unsigned int i = (unsigned int)floor((size - 1) * fraction);
 	double delta = (size - 1) * fraction - i;
 
+	if (delta == 0) {
+		return data[i];
+	} else if (delta == 1) {
+		return data[i + 1];
+	}
+
 	return (1 - delta) * data[i] + delta * data[i + 1];
 }
