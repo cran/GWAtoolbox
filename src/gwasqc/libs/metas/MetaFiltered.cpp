@@ -240,7 +240,9 @@ void MetaFiltered::print_html(ostream& stream, char path_separator) {
 double MetaFiltered::get_memory_usage() {
 	unsigned long int memory = 0;
 
-	memory += bitarray->get_total_bytes() * sizeof(unsigned char);
+	if (bitarray != NULL) {
+		memory += bitarray->get_total_bytes() * sizeof(unsigned char);
+	}
 
 	return memory / 1048576.0;
 }

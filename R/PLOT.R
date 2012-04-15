@@ -78,7 +78,7 @@
 				
 				par(mar = c(3, 3, 1, 1), cex = 0.7)
 				bxp(boxplots[[1]][[1]], horizontal = TRUE, main = "", axes = FALSE, boxfill = 3)
-				axis(1, at = quantiles, lab = quantiles)
+				axis(1, at = quantiles, labels = quantiles)
 				
 				par(def.par)
 				dev.off()				
@@ -130,7 +130,7 @@
 					}
 					
 					suppressWarnings(bxp(boxplots[[j]][[1]], horizontal = TRUE, main = boxplots[[j]][[4]], axes = FALSE, boxfill = 3, ylim = x))
-					axis(1, at = quantiles, lab = quantiles)  
+					axis(1, at = quantiles, labels = quantiles)  
 				}
 				
 				par(def.par)

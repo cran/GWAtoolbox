@@ -827,7 +827,7 @@ For what concerns the skewness, there is no good reason why $sk_\theta$ of the 5
 Then, for given $K$ studies, we can estimate $ku_{\theta,k}$ and $sk_{\theta,k}$ for $k = 1, \dots, K$, and we can plot the two vectors $sk_{\theta,[1,\dots,K]}$ vs. $ku_{\theta,[1,\dots,K]}$ in a Cartesian diagram, with every point representing a different study.
 We expect all studies to cluster around the same point at $sk=0$, with similar kurtosis values.
 Studies that show strong departures from the main cluster could be submitted to detailed investigation in order to detect the reason of such discrepancy.
-In general, departures along the $sk$-axis are more serious than departures on the $sk$-axis, because the first ones will introduce systematic bias in the meta-analysis with one or a few studies that are systematically different from the others, with effect estimates that are more often in one direction.
+In general, departures along the $sk$-axis are more serious than departures on the $ku$-axis, because the first ones will introduce systematic bias in the meta-analysis with one or a few studies that are systematically different from the others, with effect estimates that are more often in one direction.
 
 This diagnostic plot is shown in Figure \ref{fig:kusk_check} where the set of SNPs with 50\% largest p-values is compared with other sets of SNPs with the largest 75\%, 95\%, and 100\% (i.e. all SNPs are considered) p-values, respectively.
 Highlighted are points (studies) that are largely difference from the ones in the cluster.

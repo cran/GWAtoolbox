@@ -1,6 +1,6 @@
 Package: GWAtoolbox
-Version: 2.0.1
-Date: 2012-01-25
+Version: 2.0.2
+Date: 2012-04-15
 Title: GWAS Quality Control
 Author: Daniel Taliun <Daniel.Taliun@eurac.edu>, Christian Fuchsberger
         <cfuchsb@umich.edu>, Cristian Pattaro
@@ -15,6 +15,6 @@ SystemRequirements: GNU GSL
 License: GPL (>= 3)
 Repository: CRAN
 Repository/R-Forge/Project: gwatoolbox
-Repository/R-Forge/Revision: 64
-Date/Publication: 2012-01-27 11:45:23
-Packaged: 2012-01-26 10:55:45 UTC; rforge
+Repository/R-Forge/Revision: 68
+Packaged: 2012-04-18 10:16:10 UTC; rforge
+Date/Publication: 2012-04-19 07:46:19

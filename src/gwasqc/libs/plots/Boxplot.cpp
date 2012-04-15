@@ -216,7 +216,7 @@ Boxplot* Boxplot::create(const char* name, double* sorted_data, int data_size, d
 
 		i = 0;
 		while (i < upper_outliers_cnt) {
-			if (sorted_data[data_size - upper_outliers_cnt + i] > previous_value + delta) {
+			if (sorted_data[data_size - upper_outliers_cnt + i] >= previous_value + delta) {
 				new_outliers_cnt += 1;
 				previous_value = sorted_data[data_size - upper_outliers_cnt + i];
 			}
