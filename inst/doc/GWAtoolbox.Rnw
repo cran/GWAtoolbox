@@ -1095,8 +1095,297 @@ PROCESS input_file_3.txt
 By default, the \emph{gwasformat()} computes the effective sample size based on \emph{IMP\_QUALITY}\index{IMP\_QUALITY} and \emph{N}\index{N} columns.
 The computed values are saved to the new column \emph{N\_effective}\index{N\_effective}.
 
-%In addition to the facilities for the data QC, \emph{GWAtoolbox} also includes facilities including routines for the data manipulation after the GWAS meta-analysis has been done and functions that facilitates result annotation.
-%These extensions are currently being debugged and will be made available soon.
+\subsection{GWAS Data Files Annotation}
+Often there is a need to annotate markers in GWAS data files with regions (e.g. genes).
+The \emph{annotate()} function and its parallel version \emph{pannotate()} allow to quickly annotate every marker in GWAS data files with regions that contain it or fall in a specified windows around it (e.g. +/-50kb, +/-100kb and etc).
+The arbitrary number of windows of various sizes can be specified.
+The regions with their chromosomal coordinates must be provided in a separate file.
+Therefore, it is responsibility of an analyst to prepare the list of regions of interest with chromosomal positions on required human genome build version.
+It is possible to annotate markers if only their names are available in GWAS data files, or if there is a need to change chromosomal positions (e.g. if different version of human genome build should be used).
+In this case, their chromosomal positions must be provided in a separate map file.
+
+\subsubsection{Input Script}
+The annotation instructions are provided to \emph{annotate()} through the input script that is identical to the script required by \emph{gwasqc()}.
+Additional commands are supported allowing to specify files with regions for annotation and map files with chromosomal coordinates for markers, if needed.
+Example \ref{ex:full_annotation_script} illustrates the content of a hypothetical input script file.
+
+\begin{example} 
+\label{ex:full_annotation_script}
+\begin{verbatim}
+# Description (meaning) of the columns in input files 
+# with GWAS data to be annotated.
+MARKER     SNPID
+CHR		   chr
+POSITION   position
+
+# File with regions.
+REGIONS_FILE	genes_HGNC_ensembl_rel54_may2009_b36.txt
+
+# Description (meaning) of the columns in file with regions.
+REGION_NAME    Gene
+REGION_CHR     Chromosome
+REGION_START   Start
+REGION_END     End
+
+# Window sizes around markers.
+REGIONS_DEVIATION   0 10000 25000
+
+# Preserve original columns in the output file and append 
+# columns with annotated regions to the end.
+REGIONS_APPEND   ON
+
+# Specify prefix for output files with annotation results.
+PREFIX   annotated_
+
+# Input file with GWAS data to annotate.
+PROCESS   gwa_data_example_1.txt
+
+# Next file with GWAS data will be annotated using marker 
+# chromosomal positions in the external map file.
+MAP_FILE   map_b37.txt
+
+# Description (meaning) of the columns in map file.
+MAP_MARKER     snpid
+MAP_CHR        chr_b37
+MAP_POSITION   pos_b37
+
+# Change the regions file.
+REGIONS_FILE   genes_HGNC_ensembl_rel67_may2012_b37.txt
+
+# Change window sizes around markers.
+REGIONS_DEVIATION   0 25000 50000
+
+# Output only columns with annotated regions, marker 
+# names and their chromosomal positions.
+REGIONS_APPEND   OFF
+
+# Another input file with GWAS data to annotate.
+PROCESS   gwa_data_example_2.tbl 
+\end{verbatim}
+\end{example}
+
+\subsubsection{Specifying The Input Data Files}
+The names of the GWAS data files are specified in the input script with the command \textbf{PROCESS}\index{PROCESS} (one line per file). 
+A different directory path can be specified for each file.
+	
+\begin{example}
+\begin{verbatim}
+PROCESS		input_file_1.txt\cr
+PROCESS		/dir_1/dir_2/input_file_2.csv	
+\end{verbatim}
+The annotation is applied first to \emph{input\_file\_1.txt} and then to \emph{input\_file\_2.csv}.
+\end{example}
+
+\subsubsection{Specifying The Regions Files}
+The names of the regions (e.g. with genes) files are specified in the input script with the command \textbf{REGIONS\_FILE}\index{REGIONS\_FILE}.
+In the same script different regions files can be specified for different GWAS data files.
+Also different directory path can be specified for each regions file.
+
+\begin{example}
+\begin{verbatim}
+REGIONS_FILE	genes_file_1.txt\cr
+PROCESS			input_file_1.txt\cr
+REGIONS_FILE	/dir_1/dir_2/genes_file_2.csv\cr
+PROCESS			input_file_2.csv\cr
+PROCESS			input_file_3.txt
+\end{verbatim}
+The annotation is applied first to \emph{input\_file\_1.txt} using regions from \emph{genes\_file\_1.txt} file.
+Then, files \emph{input\_file\_2.csv} and \emph{input\_file\_3.txt} are annotated with regions in \emph{genes\_file\_2.csv} file.
+\end{example}
+
+\subsubsection{Specifying The Map Files}
+The names of the map files are specified in the input script with the command \textbf{MAP\_FILE}\index{MAP\_FILE}.
+In the same script different map files can be specified for different GWAS data files.
+Also different directory path can be specified for each map files.
+	
+\begin{example}
+\begin{verbatim}
+MAP_FILE		map_file_1.txt
+REGIONS_FILE	genes_file_1.txt
+PROCESS			input_file_1.txt
+MAP_FILE		/dir_1/dir_2/map_file_2.csv
+REGIONS_FILE	/dir_1/dir_2/genes_file_2.csv
+PROCESS			input_file_2.csv
+PROCESS			input_file_3.txt
+\end{verbatim}
+The annotation is applied first to \emph{input\_file\_1.txt} using marker genomic positions in \emph{map\_file\_1.txt} file and regions in \emph{genes\_file\_1.txt} file.
+Then, files \emph{input\_file\_2.csv} and \emph{input\_file\_3.txt} are annotated with regions in \emph{genes\_file\_2.csv} file using marker genomic positions in \emph{map\_file\_2.csv}.
+\end{example}
+
+\subsubsection{Specifying Column Names in Input Data Files}
+In table \ref{table:default_columns_annotation} the complete list of default column names that must be present in the GWAS data files for annotation is reported. 
+These names identify uniquely the items in the GWAS data file for annotation purposes.
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{|l|p{8cm}|}
+\hline
+Default column name(s) & Description \\
+\hline
+MARKER\index{MARKER} & Marker name \\
+CHR\index{CHR} & Chromosome number or name \\
+POSITION\index{POSITION} & Marker position \\
+\hline
+\end{tabular}
+\caption{The default column names for annotation.}
+\label{table:default_columns_annotation}
+\end{center}
+\end{table}
+
+Given that different names can be provided for each GWAS data file, \emph{annotate()} allows to redefine the default values for every input file in the input script. 
+The redefinition command consists of the default column name followed by the new column name.
+When the map file is specified using command \textbf{MAP\_FILE}\index{MAP\_FILE}, then \emph{CHR} and \emph{POSITION} columns in the GWAS data file are not required.
+	
+\begin{example}
+Let's assume to have two input files, \emph{input\_file\_1.txt} and \emph{input\_file\_2.csv}. 
+In the \emph{input\_file\_1.txt}, the column names for marker name, chromosome name and position are \emph{SNPID}, \emph{CHR} and \emph{POS}, respectively. 
+In the \emph{input\_file\_2.csv}, the column names for marker name is the same as in \emph{input\_file\_1.txt}, but the column names for the chromosome and position are \emph{chromosome} and \emph{position}, respectively. 
+The correct column redefinition is as follows:
+\begin{verbatim}
+MARKER		SNPID
+POSITION	POS
+PROCESS		input_file_1.txt
+CHR			chromosome
+POSITION	position
+PROCESS		input_file_2.csv
+\end{verbatim}
+There are no need to define the \emph{CHR} field for the \emph{input\_file\_1.txt}, since it matches the default name.
+\end{example}
+
+\subsubsection{Specifying Column Names in Regions Files}
+In table \ref{table:default_columns_regions_file} the complete list of default column names for the regions file is reported. 
+These names identify uniquely the items in the regions file.
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{|l|p{8cm}|}
+\hline
+Default column name(s) & Description \\
+\hline
+REGION\_NAME\index{REGION\_NAME} & Region name (e.g. gene name) \\
+REGION\_CHR\index{REGION\_CHR} & Chromosome number or name \\
+REGION\_START\index{REGION\_START} & Region (e.g. gene) start position \\
+REGION\_END\index{REGION\_END} & Region (e.g.) end position \\
+\hline
+\end{tabular}
+\caption{The default column names in regions file.}
+\label{table:default_columns_regions_file}
+\end{center}
+\end{table}
+
+Given that different names can be provided for each regions file, \emph{annotate()} allows to redefine the default values for every regions file in the input script. 
+The redefinition command consists of the default column name followed by the present column name. 
+
+\begin{example}	
+Let's assume to have two map files, \emph{region\_file\_1.txt} and \emph{region\_file\_2.csv}. 
+In the \emph{region\_file\_1.txt}, the column names for the region name, chromosome, start and end position are \emph{name}, \emph{chr}, \emph{REGION\_START} and \emph{REGION\_END}, respectively. 
+In the \emph{region\_file\_2.csv}, the column name for the region name and chromosome are the same as in \emph{regions\_file\_1.txt}, but the column names for the region start and end positions are \emph{start} and \emph{end}, respectively. 
+The correct column redefinition is as follows:
+\begin{verbatim}
+REGIONS_FILE	genes_file_1.txt
+REGION_NAME		name
+REGION_CHR		chr
+PROCESS			input_file_1.txt
+REGIONS_FILE	genes_file_2.csv
+REGION_START 	start
+REGION_END		end
+PROCESS			input_file_2.csv
+\end{verbatim}
+There is no need to define the \emph{REGION\_START} and \emph{REGION\_END} fields for \emph{genes\_file\_1.txt} regions file.
+Also there is no need to redefine \emph{REGION\_NAME} and \emph{REGION\_CHR} fields for the \emph{genes\_file\_2.csv} map file.	
+\end{example}
+
+\subsubsection{Specifying Column Names in Map Files}
+In table \ref{table:default_columns_map_file} the complete list of default column names for the map file is reported. 
+These names identify uniquely the items in the map file.
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{|l|p{8cm}|}
+\hline
+Default column name(s) & Description \\
+\hline
+MAP\_MARKER\index{MAP\_MARKER} & Marker name \\
+MAP\_CHR\index{MAP\_CHR} & Chromosome number or name \\
+MAP\_POSITION\index{MAP\_POSITION} & Marker position \\
+\hline
+\end{tabular}
+\caption{The default column names in map file.}
+\label{table:default_columns_map_file}
+\end{center}
+\end{table}
+
+Given that different names can be provided for each map file, \emph{annotate()} allows to redefine the default values for every map file in the input script. 
+The redefinition command consists of the default column name followed by the present column name. 
+	
+\begin{example}
+Let's assume to have two map files, \emph{map\_file\_1.txt} and \emph{map\_file\_2.csv}. 
+In the \emph{map\_file\_1.txt}, the column names for marker name, chromosome and position are \emph{name}, \emph{MAP\_CHR} and \emph{pos}, respectively. 
+In the \emph{map\_file\_2.csv}, the column name for the marker name and chromosome are the same as in \emph{map\_file\_1.txt}, but the column name for the marker position is \emph{map\_pos}. 
+The correct column redefinition is as follows:
+\begin{verbatim}
+MAP_FILE		map_file_1.txt
+MAP_MARKER		name
+MAP_POSITION	pos
+REGIONS_FILE	genes_file_1.txt
+PROCESS			input_file_1.txt
+MAP_FILE		map_file_2.csv
+MAP_POSITION	map_pos
+REGIONS_FILE	genes_file_2.csv
+PROCESS			input_file_2.csv
+\end{verbatim}
+There is no need to define the \emph{MAP\_CHR} field for both map files.
+Also there is no need to redefine \emph{MAP\_MARKER} for the \emph{genes\_file\_2.csv} map file.	
+\end{example}
+
+\section{Specifying Window Size For Annotation}
+Every marker in the GWAS data file is annotated with the regions (e.g. genes) that fall in a particular window around it.
+\emph{annotate()} allows to specify multiple window sizes using command \textbf{REGIONS\_DEVIATION}\index{REGIONS\_DEVIATION}.
+Command \textbf{REGIONS\_DEVIATION}\index{REGIONS\_DEVIATION} is followed by an arbitrary number of positive integers that specify window sizes around markers in base pairs.
+Each specified window size results in a new output column where all regions overlapping with this window are reported.
+The ouptut columns are ordered by window size starting with the smallest.
+Therefore, every new output column represents bigger window size and lists only those regions that were not reported previously.
+If \textbf{REGIONS\_DEVIATION}\index{REGIONS\_DEVIATION} is not specified, then the default window sizes are 0, 100000 and 250000 (i.e. 0, +/-100kb and +/- 250kb around marker).
+If 0 is specified, then only regions that include the marker are reported.
+	
+\begin{example}
+\begin{verbatim}
+REGIONS_FILE		genes_file_1.txt
+REGIONS_DEVIATION	0 50000 100000
+PROCESS				input_file_1.txt
+REGIONS_DEVIATION	0 100000 250000 500000
+PROCESS				input_file_2.csv
+\end{verbatim}
+Every marker in \emph{input\_file\_1.txt} will be annotated with regions that contains it or are within +/-50kb and +/-100kb windows around it.
+While every marker in \emph{input\_file\_2.csv} will be annotated with regions that contains it or are within +/-100kb, +/-250kb and +/-500kb windows around it.
+\end{example}
+
+\section{Specifying Output Format}
+Often GWAS data file contains many columns that are not required in the output files with annotation results.
+By default, in addition to columns with annotated regions, \emph{annotate()} outputs only columns with marker name, chromosome name and position.
+This behaviour can be modified for every input file in the input script using the command \textbf{REGIONS\_APPEND}\index{REGIONS\_APPEND}.
+Table \ref{table:regions_append_cmd} lists all possible arguments.
+\begin{table}[!ht]
+\begin{center}
+\begin{tabular}{|p{4cm}|p{7.5cm}|}
+\hline
+Argument & Description \\
+\hline
+OFF & Only the original columns with marker name, chromosome name and position are preserved. Columns with annotated regions are appended to the end. (default) \\
+ON & All the original columns are preserved and columns with annotated regions are appended to the end.\\
+\hline
+\end{tabular}
+\caption{The list of arguments for the REGIONS\_APPEND command.}
+\label{table:regions_append_cmd}
+\end{center}
+\end{table}
+
+\begin{example}
+\begin{verbatim}
+REGIONS_FILE		genes_file_1.txt
+REGIONS_APPEND		ON
+PROCESS				input_file_1.txt
+REGIONS_APPEND		OFF
+PROCESS				input_file_2.csv
+\end{verbatim}
+\end{example}
 
 \begin{thebibliography}{9}
 

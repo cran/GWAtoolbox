@@ -20,6 +20,8 @@
 #ifndef GWAFILE_H_
 #define GWAFILE_H_
 
+#include <algorithm>
+
 #include "../../descriptor/include/Descriptor.h"
 #include "GwaFileException.h"
 
@@ -35,6 +37,11 @@ private:
 	char header_separator;
 	char data_separator;
 	unsigned long int estimated_size;
+	char regions_file_header_separator;
+	char regions_file_data_separator;
+	bool regions_append_on;
+	char map_file_header_separator;
+	char map_file_data_separator;
 
 public:
 	GwaFile(Descriptor* descriptor) throw (GwaFileException);
@@ -50,6 +57,11 @@ public:
 	char get_header_separator();
 	char get_data_separator();
 	unsigned long int get_estimated_size();
+	char get_regions_file_header_separator();
+	char get_regions_file_data_separator();
+	bool is_regions_append_on();
+	char get_map_file_header_separartor();
+	char get_map_file_data_separator();
 
 	void check_filters(Descriptor* descriptor) throw (GwaFileException);
 	void check_thresholds(Descriptor* descriptor) throw (GwaFileException);
@@ -61,6 +73,11 @@ public:
 	void check_filesize(Descriptor* descriptor) throw (GwaFileException);
 	void check_order(Descriptor* descriptor) throw (GwaFileException);
 	void check_genomiccontrol(Descriptor* descriptor) throw (GwaFileException);
+	void check_regions_file(Descriptor* descriptor) throw (GwaFileException);
+	void check_regions_file_separators(Descriptor* descriptor) throw (GwaFileException);
+	void check_regions_deviation(Descriptor* descriptor) throw (GwaFileException);
+	void check_regions_append(Descriptor* descriptor) throw (GwaFileException);
+	void check_map_file_separators(Descriptor* descroptor) throw (GwaFileException);
 
 };
 

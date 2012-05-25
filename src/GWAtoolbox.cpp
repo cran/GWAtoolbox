@@ -28,6 +28,7 @@
 #include "gwafile/include/GwaFile.h"
 #include "gwasqc/include/analyzer/Analyzer.h"
 #include "gwasformat/include/formatter/Formatter.h"
+#include "annotation/include/Annotator.h"
 
 /* Define LINUX flag for compilation under Linux */
 #ifndef WIN32
@@ -432,47 +433,46 @@ SEXP Robj2Descriptor(SEXP descriptor_Robj) {
 				}
 			} else if (strcmp(value, "thresholds") == 0) {
 				thresholds = VECTOR_ELT(descriptor_Robj, i);
-				if (thresholds == R_NilValue) {
-					error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
-				}
-				if (!isVector(thresholds)) {
-					error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
-				}
-				if (length(thresholds) != 2) {
-					error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
-				}
-
-				threshold_names = VECTOR_ELT(thresholds, 0);
-				if (threshold_names == R_NilValue) {
-					error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
-				}
-				if (!isVector(threshold_names)) {
-					error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
-				}
-
-				threshold_values = VECTOR_ELT(thresholds, 1);
-				if (threshold_values == R_NilValue) {
-					error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
-				}
-				if (!isVector(threshold_values)) {
-					error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
-				}
-
-				ncol = length(threshold_names);
-				if (ncol != length(threshold_values)) {
-					error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
-				}
-
-				for (int j = 0; j < ncol; j++) {
-					threshold_value = VECTOR_ELT(threshold_values, j);
-					if (threshold_value == R_NilValue) {
+				if (thresholds != R_NilValue) {
+					if (!isVector(thresholds)) {
 						error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
 					}
-					if (length(threshold_value) <= 0) {
+					if (length(thresholds) != 2) {
 						error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
 					}
-					for (int k = 0; k < length(threshold_value); k++) {
-						descriptor->add_threshold(CHAR(STRING_ELT(threshold_names, j)), REAL(threshold_value)[k]);
+
+					threshold_names = VECTOR_ELT(thresholds, 0);
+					if (threshold_names == R_NilValue) {
+						error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
+					}
+					if (!isVector(threshold_names)) {
+						error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
+					}
+
+					threshold_values = VECTOR_ELT(thresholds, 1);
+					if (threshold_values == R_NilValue) {
+						error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
+					}
+					if (!isVector(threshold_values)) {
+						error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
+					}
+
+					ncol = length(threshold_names);
+					if (ncol != length(threshold_values)) {
+						error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
+					}
+
+					for (int j = 0; j < ncol; j++) {
+						threshold_value = VECTOR_ELT(threshold_values, j);
+						if (threshold_value == R_NilValue) {
+							error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
+						}
+						if (length(threshold_value) <= 0) {
+							error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
+						}
+						for (int k = 0; k < length(threshold_value); k++) {
+							descriptor->add_threshold(CHAR(STRING_ELT(threshold_names, j)), REAL(threshold_value)[k]);
+						}
 					}
 				}
 			} else if (strcmp(value, "renamed_columns") == 0) {
@@ -1225,6 +1225,59 @@ SEXP perform_formatting(SEXP external_descriptor_pointer) {
 	}
 
 	return output_robj;
+}
+
+SEXP perform_annotation(SEXP external_descriptor_pointer) {
+	Descriptor* descriptor = NULL;
+	GwaFile* gwa_file = NULL;
+
+	void (GwaFile::*check_functions[8])(Descriptor*) = {
+			&GwaFile::check_prefix,
+			&GwaFile::check_casesensitivity,
+			&GwaFile::check_separators,
+			&GwaFile::check_regions_file,
+			&GwaFile::check_regions_file_separators,
+			&GwaFile::check_regions_deviation,
+			&GwaFile::check_regions_append,
+			&GwaFile::check_map_file_separators
+	};
+
+	clock_t start_time = 0;
+	double execution_time = 0.0;
+
+	if (external_descriptor_pointer == R_NilValue) {
+		error("\nThe external Descriptor pointer argument is NULL.");
+	}
+
+	if (TYPEOF(external_descriptor_pointer) != EXTPTRSXP) {
+		error("\nThe external Descriptor pointer argument has an incorrect type.");
+	}
+
+	descriptor = (Descriptor*)R_ExternalPtrAddr(external_descriptor_pointer);
+
+	try {
+		Annotator annotator;
+
+		gwa_file = new GwaFile(descriptor, check_functions, 8);
+
+		annotator.open_gwafile(gwa_file);
+		annotator.process_header();
+
+		if (annotator.is_map_present()) {
+			annotator.index_map();
+		}
+		annotator.index_regions();
+
+		annotator.annotate();
+
+		annotator.close_gwafile();
+
+		delete gwa_file;
+	} catch (Exception &e) {
+		error("\n%s", e.what());
+	}
+
+	return R_NilValue;
 }
 
 }

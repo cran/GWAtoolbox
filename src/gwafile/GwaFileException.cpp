@@ -19,7 +19,7 @@
 
 #include "include/GwaFileException.h"
 
-const int GwaFileException::MESSAGE_TEMPLATES_NUMBER = 12;
+const int GwaFileException::MESSAGE_TEMPLATES_NUMBER = 14;
 const char* GwaFileException::MESSAGE_TEMPLATES[] = {
 /*00*/	"The '%s' argument has NULL value.",
 /*01*/	"The '%s' argument has an invalid value.",
@@ -32,7 +32,9 @@ const char* GwaFileException::MESSAGE_TEMPLATES[] = {
 /*08*/	"Too many thresholds are specified in the %s column for the '%s' file. Strictly two thresholds are required.",
 /*09*/	"The mandatory output prefix is not specified in the %s command for the '%s' file.",
 /*10*/	"Error while checking processing instructions for the '%s' file.",
-/*11*/	"Error while estimating size of '%s' file."
+/*11*/	"Error while estimating size of '%s' file.",
+/*12*/	"The name of the file with regions for annotation is not specified in the %s command for the '%s' file.",
+/*13*/	"Negative value is specified in the '%s' command for the '%s' file. Strictly positive values or 0 are required."
 };
 
 GwaFileException::GwaFileException() : Exception() {

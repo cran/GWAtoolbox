@@ -975,7 +975,7 @@ void Analyzer::print_txt_report() throw (AnalyzerException) {
 	try {
 		time_t system_time = time(NULL);
 
-		const char* version = "GWASQC(c) v2.0.2";
+		const char* version = VERSION;
 		const char* scanned = "File scanned:\t";
 		const char* date = "Date        :\t";
 		char* current_time = strtok(asctime(localtime(&system_time)), "\n");
@@ -1564,7 +1564,11 @@ void Analyzer::print_csv_report() throw (AnalyzerException) {
 			while (filtered_metas_it != filtered_metas.end()) {
 				if (strcmp((*filtered_metas_it)->get_actual_name(), csv_columns[i]) == 0) {
 					if ((*filtered_metas_it)->is_numeric()) {
-						o_csvfile_stream << separator << (*filtered_metas_it)->get_min();
+						if (!isnan((*filtered_metas_it)->get_min())) {
+							o_csvfile_stream << separator << (*filtered_metas_it)->get_min();
+						} else {
+							o_csvfile_stream << separator << "nan";
+						}
 					} else {
 						o_csvfile_stream << separator << "NA";
 					}
@@ -1594,7 +1598,11 @@ void Analyzer::print_csv_report() throw (AnalyzerException) {
 			while (filtered_metas_it != filtered_metas.end()) {
 				if (strcmp((*filtered_metas_it)->get_actual_name(), csv_columns[i]) == 0) {
 					if ((*filtered_metas_it)->is_numeric()) {
-						o_csvfile_stream << separator << (*filtered_metas_it)->get_max();
+						if (!isnan((*filtered_metas_it)->get_max())) {
+							o_csvfile_stream << separator << (*filtered_metas_it)->get_max();
+						} else {
+							o_csvfile_stream << separator << "nan";
+						}
 					} else {
 						o_csvfile_stream << separator << "NA";
 					}
@@ -2090,7 +2098,7 @@ void Analyzer::print_html_report(char** html_report_path, vector<Plot*>& plots, 
 		o_htmlfile_stream << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" << endl;
 		o_htmlfile_stream << "<html xmlns=\"http://www.w3.org/1999/xhtml\">" << endl;
 		o_htmlfile_stream << "<head>" << endl;
-		o_htmlfile_stream << "<title>GWASQC v2.0.2</title>" << endl;
+		o_htmlfile_stream << "<title>" << VERSION << "</title>" << endl;
 		o_htmlfile_stream << "<script type = \"text/javascript\">" << endl;
 		o_htmlfile_stream << "// <![CDATA[" << endl;
 
@@ -2162,7 +2170,7 @@ void Analyzer::print_html_report(char** html_report_path, vector<Plot*>& plots, 
 		o_htmlfile_stream << "<body>";
 
 		o_htmlfile_stream << "<div class = \"header\"><div class = \"headertext\">";
-		o_htmlfile_stream << "<h1>GWASQC v2.0.2</h1><hr />";
+		o_htmlfile_stream << "<h1>"<< VERSION <<"</h1><hr />";
 		o_htmlfile_stream << "<p>" << gwafile->get_descriptor()->get_name() << "<br />" << current_time << "</p>";
 		o_htmlfile_stream << "</div></div>";
 
@@ -2694,7 +2702,7 @@ void Analyzer::print_boxplots_html(vector<const char*>& boxplot_names, const cha
 		o_htmlfile_stream << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" << endl;
 		o_htmlfile_stream << "<html xmlns=\"http://www.w3.org/1999/xhtml\">" << endl;
 		o_htmlfile_stream << "<head>" << endl;
-		o_htmlfile_stream << "<title>GWASQC v2.0.2</title>" << endl;
+		o_htmlfile_stream << "<title>" << VERSION << "</title>" << endl;
 		o_htmlfile_stream << "<script type = \"text/javascript\">" << endl;
 		o_htmlfile_stream << "// <![CDATA[" << endl;
 
@@ -2761,7 +2769,7 @@ void Analyzer::print_boxplots_html(vector<const char*>& boxplot_names, const cha
 
 		o_htmlfile_stream << "<div class = \"header\">";
 		o_htmlfile_stream << "<div class = \"headertext\">";
-		o_htmlfile_stream << "<h1>GWASQC v2.0.2</h1>";
+		o_htmlfile_stream << "<h1>" << VERSION << "</h1>";
 		o_htmlfile_stream << "<hr />";
 		o_htmlfile_stream << "<p>Between-Study Comparison<br />";
 		o_htmlfile_stream << current_time << "</p>";
@@ -2855,7 +2863,7 @@ void Analyzer::print_menu_html(vector<const char*>& gwa_file_names, vector<const
 		o_htmlfile_stream << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
 		o_htmlfile_stream << "<html xmlns=\"http://www.w3.org/1999/xhtml\">";
 		o_htmlfile_stream << "<head>";
-		o_htmlfile_stream << "<title>GWASQC v2.0.2</title>";
+		o_htmlfile_stream << "<title>" << VERSION << "</title>";
 
 		o_htmlfile_stream << "<style type = \"text/css\">" << endl;
 
@@ -2954,7 +2962,7 @@ void Analyzer::print_frameset_html(const char* menu_html, const char* html_outpu
 		o_htmlfile_stream << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">" << endl;
 		o_htmlfile_stream << "<html xmlns=\"http://www.w3.org/1999/xhtml\">";
 		o_htmlfile_stream << "<head>";
-		o_htmlfile_stream << "<title>GWASQC v2.0.2</title>";
+		o_htmlfile_stream << "<title>" << VERSION << "</title>";
 		o_htmlfile_stream << "</head>";
 		o_htmlfile_stream << "<frameset cols = \"240, *\">";
 		o_htmlfile_stream << "<frame src=\"" << menu_html << "\" noresize=\"noresize\" scrolling=\"no\" frameborder=\"0\" marginwidth=\"0\" />";

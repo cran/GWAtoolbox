@@ -31,7 +31,7 @@
 }
 \section{Field Separator}{
 	The field (column) separator can be different for each GWAS data file. 
-	\code{gwasqc()} automatically detects the separator field for each input file \emph{based on the first 10 rows}. 
+	\code{pgwasqc()} automatically detects the separator field for each input file \emph{based on the first 10 rows}. 
 	However, the user has the possibility to specify the separator manually for each individual file using the command \bold{SEPARATOR}. 
 	The supported arguments and related separators are listed below:
 	\tabular{ll}{
@@ -53,7 +53,7 @@
 	for the input files \file{input_file_2.csv} and \file{input_file_3.txt} the separator is manually set to tabulation by the user.
 }
 \section{Missing Values}{
-	By default, \code{gwasqc()} assumes that missing values are labeled as \emph{NA}. 
+	By default, \code{pgwasqc()} assumes that missing values are labeled as \emph{NA}. 
 	However, the label for missing value can be specified manually by the user with the command \bold{MISSING}.
 
 	Example:
@@ -92,7 +92,7 @@
 		\tab was used for imputation (1) or not (0)\cr
 		AVPOSTPROB\tab Average posterior probability for imputed marker allele dosage
 	}
-	Given that different names can be provided for each GWAS data file, \code{gwasqc()} allows to redefine the default values for 
+	Given that different names can be provided for each GWAS data file, \code{pgwasqc()} allows to redefine the default values for 
 	every input file in the input script. 
 	The redefinition command consists of the default column name followed by the new column name. 
 	To redefine the default column names for \emph{coded} and \emph{non-coded} alleles, the command \bold{ALLELE} followed 
@@ -124,7 +124,7 @@
 	}
 }
 \section{Case Sensitivity}{
-	By default the \code{gwasqc()} assumes that column names in the input files are case insensitive. 
+	By default the \code{pgwasqc()} assumes that column names in the input files are case insensitive. 
 	For example, the column names \emph{STDERR}, \emph{StdErr}, and \emph{STDErr} are all perfectly equivalent.
 	This behaviour can be modified for every input file in the input script using the command \bold{CASESENSITIVE}, 
 	that controls case sensitivity for the column names, as specified below:
@@ -148,7 +148,7 @@
 	Often, there is the necessity to identify implausible values, to exclude unreliable results from the meta-analysis. 
 	Implausible values can happen due to data sparseness, errors in the data handling, or other causes.
 
-	\code{gwasqc()} identifies SNPs with suspicious statistics (p-value, standard error, etc.) by applying appropriate threshold values.
+	\code{pgwasqc()} identifies SNPs with suspicious statistics (p-value, standard error, etc.) by applying appropriate threshold values.
 	After the data processing, a detailed report including the number of SNPs with implausible statistics and the nature of the problem is produced.
 	In addition, suspicious SNPs are excluded from the calculation of the summary statistics on data quality.
 
@@ -186,7 +186,7 @@
 	SNPs with low imputation quality and with too small minor allele frequency (MAF) could make spuriously small p-values happen.
 	Checking for the presence of cryptic relatedness or hidden population sub-structure through the estimation of the inflation 
 	factor \emph{lambda} can be important, but one needs to identify the SNPs that could artificially increase the \emph{lambda} value.
-	\code{gwasqc()} identifies the 'high quality' SNPs by means of filters on the imputation quality and on the MAF.
+	\code{pgwasqc()} identifies the 'high quality' SNPs by means of filters on the imputation quality and on the MAF.
 	Summary statistics are calculated on the 'high quality' SNPs only.
 	The default thresholds are listed below:
 	\tabular{ll}{
@@ -289,7 +289,7 @@
 	The labels "first" and "second" will be used to identify the two studies in the plots.
 }
 \section{The Output Files}{
-	\code{gwasqc()} produces 4 types of files:
+	\code{pgwasqc()} produces 4 types of files:
 	\enumerate{
 		\item Figures, including QQ-plots, histograms, and boxplots.
 		\item One textual report file with \emph{.txt} extension.

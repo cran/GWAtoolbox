@@ -59,6 +59,21 @@ const char* Descriptor::SEPARATOR = "SEPARATOR";
 const char* Descriptor::VERBOSITY = "VERBOSITY";
 const char* Descriptor::RENAME = "RENAME";
 
+const char* Descriptor::REGIONS_FILE = "REGIONS_FILE";
+const char* Descriptor::REGIONS_FILE_SEPARATOR = "REGIONS_FILE_SEPARATOR";
+const char* Descriptor::REGIONS_DEVIATION = "REGIONS_DEVIATION";
+const char* Descriptor::REGIONS_APPEND = "REGIONS_APPEND";
+const char* Descriptor::REGION_NAME = "REGION_NAME";
+const char* Descriptor::REGION_CHR = "REGION_CHR";
+const char* Descriptor::REGION_START = "REGION_START";
+const char* Descriptor::REGION_END = "REGION_END";
+
+const char* Descriptor::MAP_FILE = "MAP_FILE";
+const char* Descriptor::MAP_FILE_SEPARATOR = "MAP_FILE_SEPARATOR";
+const char* Descriptor::MAP_MARKER = "MAP_MARKER";
+const char* Descriptor::MAP_CHR = "MAP_CHR";
+const char* Descriptor::MAP_POSITION = "MAP_POSITION";
+
 const char* Descriptor::COMMA = "COMMA";
 const char* Descriptor::COMMAS = "COMMAS";
 const char* Descriptor::SEMICOLON = "SEMICOLON";
@@ -848,6 +863,15 @@ vector<Descriptor*>* Descriptor::process_instructions(const char* script_name, c
 		default_descriptor.add_column(OEVAR_IMP, OEVAR_IMP);
 		default_descriptor.add_column(AVPOSTPROB, AVPOSTPROB);
 
+		default_descriptor.add_property(REGION_NAME, REGION_NAME);
+		default_descriptor.add_property(REGION_CHR, REGION_CHR);
+		default_descriptor.add_property(REGION_START, REGION_START);
+		default_descriptor.add_property(REGION_END, REGION_END);
+
+		default_descriptor.add_property(MAP_MARKER, MAP_MARKER);
+		default_descriptor.add_property(MAP_CHR, MAP_CHR);
+		default_descriptor.add_property(MAP_POSITION, MAP_POSITION);
+
 		TextReader reader;
 
 		reader.set_file_name(script_name);
@@ -1126,8 +1150,96 @@ vector<Descriptor*>* Descriptor::process_instructions(const char* script_name, c
 					if (!tokens.empty()) {
 						default_descriptor.add_column(AVPOSTPROB, tokens.front());
 					}
-				}
+				} else if (strcmp(token, REGIONS_FILE) == 0) {
+					if (!tokens.empty()) {
+						default_descriptor.add_property(REGIONS_FILE, tokens.front());
+					}
+				} else if (strcmp(token, REGIONS_FILE_SEPARATOR) == 0) {
+					if (!tokens.empty()) {
+						if ((strcmp_ignore_case(tokens.front(), COMMA) == 0) ||
+								(strcmp_ignore_case(tokens.front(), COMMAS) == 0)) {
+							default_descriptor.add_property(REGIONS_FILE_SEPARATOR, COMMA);
+						} else if (strcmp_ignore_case(tokens.front(), SEMICOLON) == 0) {
+							default_descriptor.add_property(REGIONS_FILE_SEPARATOR, SEMICOLON);
+						} else if ((strcmp_ignore_case(tokens.front(), TAB) == 0) ||
+								(strcmp_ignore_case(tokens.front(), TABULATION) == 0)) {
+							default_descriptor.add_property(REGIONS_FILE_SEPARATOR, TABULATION);
+						} else if (strcmp_ignore_case(tokens.front(), WHITESPACE) == 0) {
+							default_descriptor.add_property(REGIONS_FILE_SEPARATOR, WHITESPACE);
+						} else {
+							throw DescriptorException("Descriptor", "vector<Descriptor*>* process_instructions( const char*, char )", __LINE__, 15, tokens.front(), REGIONS_FILE_SEPARATOR);
+						}
+					}
+				} else if (strcmp(token, REGIONS_DEVIATION) == 0) {
+					if ((!tokens.empty()) && (tokens.front()[0] != SCRIPT_COMMENT_SYMBOL)) {
+						default_descriptor.remove_threshold(REGIONS_DEVIATION);
 
+						do {
+							default_descriptor.add_threshold(REGIONS_DEVIATION, tokens.front());
+							tokens.pop_front();
+						} while ((!tokens.empty()) && (tokens.front()[0] != SCRIPT_COMMENT_SYMBOL));
+					}
+				} else if (strcmp(token, REGIONS_APPEND) == 0) {
+					if (!tokens.empty()) {
+						if ((strcmp_ignore_case(tokens.front(), ON_MODES[0]) == 0) ||
+								(strcmp_ignore_case(tokens.front(), ON_MODES[1]) == 0)) {
+							default_descriptor.add_property(REGIONS_APPEND, ON_MODES[0]);
+						} else if ((strcmp_ignore_case(tokens.front(), OFF_MODES[0]) == 0) ||
+								(strcmp_ignore_case(tokens.front(), OFF_MODES[1]) == 0)) {
+							default_descriptor.add_property(REGIONS_APPEND, OFF_MODES[0]);
+						} else {
+							throw DescriptorException("Descriptor", "vector<Descriptor*>* process_instructions( const char*, char )", __LINE__, 15, tokens.front(), REGIONS_APPEND);
+						}
+					}
+				} else if (strcmp(token, REGION_NAME) == 0) {
+					if (!tokens.empty()) {
+						default_descriptor.add_property(REGION_NAME, tokens.front());
+					}
+				} else if (strcmp(token, REGION_CHR) == 0) {
+					if (!tokens.empty()) {
+						default_descriptor.add_property(REGION_CHR, tokens.front());
+					}
+				} else if (strcmp(token, REGION_START) == 0) {
+					if (!tokens.empty()) {
+						default_descriptor.add_property(REGION_START, tokens.front());
+					}
+				} else if (strcmp(token, REGION_END) == 0) {
+					if (!tokens.empty()) {
+						default_descriptor.add_property(REGION_END, tokens.front());
+					}
+				} else if (strcmp(token, MAP_FILE) == 0) {
+					if (!tokens.empty()) {
+						default_descriptor.add_property(MAP_FILE, tokens.front());
+					}
+				} else if (strcmp(token, MAP_FILE_SEPARATOR) == 0) {
+					if (!tokens.empty()) {
+						if ((strcmp_ignore_case(tokens.front(), COMMA) == 0) ||
+								(strcmp_ignore_case(tokens.front(), COMMAS) == 0)) {
+							default_descriptor.add_property(MAP_FILE_SEPARATOR, COMMA);
+						} else if (strcmp_ignore_case(tokens.front(), SEMICOLON) == 0) {
+							default_descriptor.add_property(MAP_FILE_SEPARATOR, SEMICOLON);
+						} else if ((strcmp_ignore_case(tokens.front(), TAB) == 0) ||
+								(strcmp_ignore_case(tokens.front(), TABULATION) == 0)) {
+							default_descriptor.add_property(MAP_FILE_SEPARATOR, TABULATION);
+						} else if (strcmp_ignore_case(tokens.front(), WHITESPACE) == 0) {
+							default_descriptor.add_property(MAP_FILE_SEPARATOR, WHITESPACE);
+						} else {
+							throw DescriptorException("Descriptor", "vector<Descriptor*>* process_instructions( const char*, char )", __LINE__, 15, tokens.front(), MAP_FILE_SEPARATOR);
+						}
+					}
+			 	} else if (strcmp(token, MAP_MARKER) == 0) {
+					if (!tokens.empty()) {
+						default_descriptor.add_property(MAP_MARKER, tokens.front());
+					}
+				} else if (strcmp(token, MAP_CHR) == 0) {
+					if (!tokens.empty()) {
+						default_descriptor.add_property(MAP_CHR, tokens.front());
+					}
+				} else if (strcmp(token, MAP_POSITION) == 0) {
+					if (!tokens.empty()) {
+						default_descriptor.add_property(MAP_POSITION, tokens.front());
+					}
+				}
 				tokens.clear();
 			}
 		}

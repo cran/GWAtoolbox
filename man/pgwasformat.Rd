@@ -35,7 +35,7 @@
 }
 \section{Field Separator}{
 	The field (column) separator can be different for each GWAS data file and during the formatting it is changed to \emph{tabulation}.
-	\code{gwasformat()} automatically detects the original separator field for each input file \emph{based on the first 10 rows}. 
+	\code{pgwasformat()} automatically detects the original separator field for each input file \emph{based on the first 10 rows}. 
 	However, the user has the possibility to specify the original separator manually for each individual file using the command \bold{SEPARATOR}. 
 	The supported arguments and related separators are listed below:
 	\tabular{ll}{
@@ -102,7 +102,7 @@
 		\tab was used for imputation (1) or not (0)\cr
 		AVPOSTPROB\tab Average posterior probability for imputed marker allele dosage
 	}
-	Given that different names can be provided for each GWAS data file, \code{gwasformat()} allows to redefine the default values for 
+	Given that different names can be provided for each GWAS data file, \code{pgwasformat()} allows to redefine the default values for 
 	every input file in the input script. 
 	The redefinition command consists of the default column name followed by the present column name. 
 	To redefine the default column names for \emph{coded} and \emph{non-coded} alleles, the command \bold{ALLELE} followed 
@@ -143,7 +143,7 @@
 	}
 }
 \section{Columns Ordering}{
-	By default the \code{gwasformat()} doesn't change the original ordering of columns in the input file.
+	By default the \code{pgwasformat()} doesn't change the original ordering of columns in the input file.
 	This behaviour can be modified for every input file in the input script using the command \bold{ORDER} as specified below:
 	\tabular{ll}{
 		Argument\tab Description\cr
@@ -175,7 +175,7 @@
 	For the input file \file{input_file_3.txt} the columns are re-ordered following the alphabetical ordering: \emph{bp, chromosome, SNPID}.
 }	
 \section{Case Sensitivity}{
-	By default the \code{gwasformat()} assumes that column names in the input files are case insensitive. 
+	By default the \code{pgwasformat()} assumes that column names in the input files are case insensitive. 
 	For example, the column names \emph{STDERR}, \emph{StdErr}, and \emph{STDErr} are all perfectly equivalent.
 	This behaviour can be modified for every input file in the input script using the command \bold{CASESENSITIVE}, 
 	that controls case sensitivity for the column names, as specified below:
@@ -196,7 +196,7 @@
 	}
 }
 \section{Specifying Filters}{
-	The \code{gwasformat()} filters SNPs based on minor allele frequency(MAF) and imputation quality.
+	The \code{pgwasformat()} filters SNPs based on minor allele frequency(MAF) and imputation quality.
 	The default thresholds are listed below:
 	\tabular{ll}{
 		Default column name\tab Default thresholds\cr
@@ -254,7 +254,7 @@
 	}
 }
 \section{Effective Sample Size}{
-	By default, the \code{gwasformat()} computes the effective sample size based on \emph{IMP_QUALITY} and \emph{N} columns.
+	By default, the \code{pgwasformat()} computes the effective sample size based on \emph{IMP_QUALITY} and \emph{N} columns.
 	The computed values are saved to the new column \emph{N_effective}.
 }
 \section{Output File Name}{
@@ -304,7 +304,7 @@
 	
 	\dontshow{options(device.ask.default = FALSE)}
 	
-	# run gwasformat() function with 2 parallel processes
+	# run pgwasformat() function with 2 parallel processes
 	pgwasformat(script, logfile, 2)
 	
 	# restore previous workspace

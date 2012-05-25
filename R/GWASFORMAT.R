@@ -70,6 +70,9 @@ gwasformat <- function(script, logfile) {
 	elapsed_time <- proc.time() - start_time
 	cat("Done (", elapsed_time[3], " sec).\n", sep="")
 	
+	cat("Processing...\n")
+	start_time <- proc.time()
+	
 	result <- vector()
 	for (i in seq(1, length(descriptors_robj), 1)) {
 		cat("  ", descriptors_robj[[i]][[4]], "\n", sep="")

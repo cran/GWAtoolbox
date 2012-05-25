@@ -52,7 +52,9 @@ GWADIRS = 	auxiliary \
 			gwasqc/libs/expressions \
 			gwasqc/libs/metas \
 			gwasqc/libs/plots \
-			gwasqc/libs/analyzer
+			gwasqc/libs/analyzer \
+			intervaltree \
+			annotation
 
 GWALIBS = 	auxiliary/*.o \
 			exception/*.o \
@@ -65,7 +67,9 @@ GWALIBS = 	auxiliary/*.o \
 			gwasqc/libs/expressions/*.o \
 			gwasqc/libs/metas/*.o \
 			gwasqc/libs/plots/*.o \
-			gwasqc/libs/analyzer/*.o
+			gwasqc/libs/analyzer/*.o \
+			intervaltree/*.o \
+			annotation/*.o
 			
 .PHONY: all gwalibs
      

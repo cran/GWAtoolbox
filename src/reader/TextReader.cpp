@@ -119,8 +119,16 @@ bool TextReader::eof() {
 	return ifile_stream.eof();
 }
 
+bool TextReader::is_open() {
+	return ifile_stream.is_open();
+}
+
 bool TextReader::is_compressed() {
 	return false;
+}
+
+int TextReader::get_buffer_size() {
+	return buffer_size;
 }
 
 unsigned long int TextReader::estimate_lines_count() throw (ReaderException) {

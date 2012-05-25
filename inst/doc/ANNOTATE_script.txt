@@ -1,0 +1,49 @@
+# Description (meaning) of the columns in input files 
+# with GWAS data to be annotated.
+MARKER		SNPID
+CHR		chr
+POSITION	position
+
+# File with regions.
+REGIONS_FILE	genes_HGNC_ensembl_rel54_may2009_b36.txt
+
+# Description (meaning) of the columns in file with regions.
+REGION_NAME	Gene
+REGION_CHR	Chromosome
+REGION_START	Start
+REGION_END	End
+
+# Window sizes around markers.
+REGIONS_DEVIATION	0 10000 25000
+
+# Preserve original columns in the output file and append 
+# columns with annotated regions to the end.
+REGIONS_APPEND	ON
+
+# Specify prefix for output files with annotation results.
+PREFIX		annotated_
+
+# Input file with GWAS data to annotate.
+PROCESS		gwa_data_example_1.txt
+
+# Next file with GWAS data will be annotated using marker 
+# chromosomal positions in the external map file.
+MAP_FILE	map_b37.txt
+
+# Description (meaning) of the columns in map file.
+MAP_MARKER	snpid
+MAP_CHR		chr_b37
+MAP_POSITION	pos_b37
+
+# Change the regions file.
+REGIONS_FILE	genes_HGNC_ensembl_rel67_may2012_b37.txt
+
+# Change window sizes around markers.
+REGIONS_DEVIATION	0 25000 50000
+
+# Output only columns with annotated regions, marker 
+# names and their chromosomal positions.
+REGIONS_APPEND	OFF
+
+# Another input file with GWAS data to annotate.
+PROCESS		gwa_data_example_2.tbl 

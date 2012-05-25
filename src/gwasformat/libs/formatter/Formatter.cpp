@@ -571,7 +571,7 @@ void Formatter::format(double lambda, char new_separator, int& n_total, int& n_f
 
 		auxiliary::transform_file_name(&o_gwafile_name, output_prefix, file_name, NULL, true);
 		if (o_gwafile_name == NULL) {
-			throw FormatterException("Formatter", "transform( double , char , int& , int& )", __LINE__, 10);
+			throw FormatterException("Formatter", "format( double , char , int& , int& )", __LINE__, 10);
 		}
 
 		if (((maf_filter_value = snp_hq->at(0)) > 0) && (maf_column_pos >= 0)){
@@ -623,7 +623,7 @@ void Formatter::format(double lambda, char new_separator, int& n_total, int& n_f
 		try {
 			ofile_stream.open(o_gwafile_name);
 		} catch (ofstream::failure &e) {
-			throw FormatterException("Formatter", "transform( double , char , int& , int& )", __LINE__, 11, o_gwafile_name);
+			throw FormatterException("Formatter", "format( double , char , int& , int& )", __LINE__, 11, o_gwafile_name);
 		}
 
 		try {
@@ -738,30 +738,30 @@ void Formatter::format(double lambda, char new_separator, int& n_total, int& n_f
 				}
 			}
 		} catch (ofstream::failure &e) {
-			throw FormatterException("Formatter", "transform( double , char , int& , int& )", __LINE__, 13, o_gwafile_name);
+			throw FormatterException("Formatter", "format( double , char , int& , int& )", __LINE__, 13, o_gwafile_name);
 		}
 
 		try {
 			ofile_stream.close();
 		} catch (ofstream::failure &e) {
-			throw FormatterException("Formatter", "transform( double , char , int& , int& )", __LINE__, 12, o_gwafile_name);
+			throw FormatterException("Formatter", "format( double , char , int& , int& )", __LINE__, 12, o_gwafile_name);
 		}
 
 		n_total = line_number - 2;
 
 		if (line_length == 0) {
-			throw FormatterException("Formatter", "transform( double , char , int& , int& )", __LINE__, 7, line_number, gwafile->get_descriptor()->get_name());
+			throw FormatterException("Formatter", "format( double , char , int& , int& )", __LINE__, 7, line_number, gwafile->get_descriptor()->get_name());
 		}
 	} catch (DescriptorException &e) {
 		FormatterException new_e(e);
-		e.add_message("Formatter", "transform( double , char , int& , int& )", __LINE__, 14, gwafile->get_descriptor()->get_name());
+		e.add_message("Formatter", "format( double , char , int& , int& )", __LINE__, 14, gwafile->get_descriptor()->get_name());
 		throw new_e;
 	} catch (ColumnException &e) {
 		FormatterException new_e(e);
-		e.add_message("Formatter", "transform( double , char , int& , int& )", __LINE__, 14, gwafile->get_descriptor()->get_name());
+		e.add_message("Formatter", "format( double , char , int& , int& )", __LINE__, 14, gwafile->get_descriptor()->get_name());
 		throw new_e;
 	} catch (FormatterException &e) {
-		e.add_message("Formatter", "transform( double , char , int& , int& )", __LINE__, 14, gwafile->get_descriptor()->get_name());
+		e.add_message("Formatter", "format( double , char , int& , int& )", __LINE__, 14, gwafile->get_descriptor()->get_name());
 		throw;
 	}
 }
