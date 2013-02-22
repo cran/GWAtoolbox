@@ -105,6 +105,14 @@ char GwaFile::get_map_file_data_separator() {
 	return map_file_data_separator;
 }
 
+char GwaFile::get_ld_file_header_separator() {
+	return ld_file_header_separator;
+}
+
+char GwaFile::get_ld_file_data_separator() {
+	return ld_file_data_separator;
+}
+
 void GwaFile::check_filters(Descriptor* descriptor) throw (GwaFileException) {
 	vector<double>* filters = NULL;
 	double swap_value = 0.0;
@@ -168,9 +176,9 @@ void GwaFile::check_thresholds(Descriptor* descriptor) throw (GwaFileException) 
 			descriptor->add_threshold(Descriptor::STDERR, 0.0);
 			descriptor->add_threshold(Descriptor::STDERR, 100000.0);
 		} else if (thresholds->size() < 2) {
-			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 7, Descriptor::STDERR, descriptor->get_full_path());
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 7, Descriptor::STDERR, descriptor->get_full_path(), 2);
 		} else if (thresholds->size() > 2) {
-			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 8, Descriptor::STDERR, descriptor->get_full_path());
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 8, Descriptor::STDERR, descriptor->get_full_path(), 2);
 		} else if (thresholds->at(0) > thresholds->at(1)) {
 			swap_value = thresholds->at(0);
 			thresholds->at(0) = thresholds->at(1);
@@ -181,9 +189,9 @@ void GwaFile::check_thresholds(Descriptor* descriptor) throw (GwaFileException) 
 			descriptor->add_threshold(Descriptor::OEVAR_IMP, 0.0);
 			descriptor->add_threshold(Descriptor::OEVAR_IMP, 1.5);
 		} else if (thresholds->size() < 2) {
-			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 7, Descriptor::OEVAR_IMP, descriptor->get_full_path());
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 7, Descriptor::OEVAR_IMP, descriptor->get_full_path(), 2);
 		} else if (thresholds->size() > 2) {
-			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 8, Descriptor::OEVAR_IMP, descriptor->get_full_path());
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 8, Descriptor::OEVAR_IMP, descriptor->get_full_path(), 2);
 		} else if (thresholds->at(0) > thresholds->at(1)) {
 			swap_value = thresholds->at(0);
 			thresholds->at(0) = thresholds->at(1);
@@ -194,9 +202,9 @@ void GwaFile::check_thresholds(Descriptor* descriptor) throw (GwaFileException) 
 			descriptor->add_threshold(Descriptor::PVALUE, 0.0);
 			descriptor->add_threshold(Descriptor::PVALUE, 1.0);
 		} else if (thresholds->size() < 2) {
-			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 7, Descriptor::PVALUE, descriptor->get_full_path());
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 7, Descriptor::PVALUE, descriptor->get_full_path(), 2);
 		} else if (thresholds->size() > 2) {
-			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 8, Descriptor::PVALUE, descriptor->get_full_path());
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 8, Descriptor::PVALUE, descriptor->get_full_path(), 2);
 		} else if (thresholds->at(0) > thresholds->at(1)) {
 			swap_value = thresholds->at(0);
 			thresholds->at(0) = thresholds->at(1);
@@ -207,9 +215,9 @@ void GwaFile::check_thresholds(Descriptor* descriptor) throw (GwaFileException) 
 			descriptor->add_threshold(Descriptor::FREQLABEL, 0.0);
 			descriptor->add_threshold(Descriptor::FREQLABEL, 1.0);
 		} else if (thresholds->size() < 2) {
-			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 7, Descriptor::FREQLABEL, descriptor->get_full_path());
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 7, Descriptor::FREQLABEL, descriptor->get_full_path(), 2);
 		} else if (thresholds->size() > 2) {
-			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 8, Descriptor::FREQLABEL, descriptor->get_full_path());
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 8, Descriptor::FREQLABEL, descriptor->get_full_path(), 2);
 		} else if (thresholds->at(0) > thresholds->at(1)) {
 			swap_value = thresholds->at(0);
 			thresholds->at(0) = thresholds->at(1);
@@ -220,9 +228,9 @@ void GwaFile::check_thresholds(Descriptor* descriptor) throw (GwaFileException) 
 			descriptor->add_threshold(Descriptor::HWE_PVAL, 0.0);
 			descriptor->add_threshold(Descriptor::HWE_PVAL, 1.0);
 		} else if (thresholds->size() < 2) {
-			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 7, Descriptor::HWE_PVAL, descriptor->get_full_path());
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 7, Descriptor::HWE_PVAL, descriptor->get_full_path(), 2);
 		} else if (thresholds->size() > 2) {
-			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 8, Descriptor::HWE_PVAL, descriptor->get_full_path());
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 8, Descriptor::HWE_PVAL, descriptor->get_full_path(), 2);
 		} else if (thresholds->at(0) > thresholds->at(1)) {
 			swap_value = thresholds->at(0);
 			thresholds->at(0) = thresholds->at(1);
@@ -233,9 +241,9 @@ void GwaFile::check_thresholds(Descriptor* descriptor) throw (GwaFileException) 
 			descriptor->add_threshold(Descriptor::CALLRATE, 0.0);
 			descriptor->add_threshold(Descriptor::CALLRATE, 1.0);
 		} else if (thresholds->size() < 2) {
-			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 7, Descriptor::CALLRATE, descriptor->get_full_path());
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 7, Descriptor::CALLRATE, descriptor->get_full_path(), 2);
 		} else if (thresholds->size() > 2) {
-			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 8, Descriptor::CALLRATE, descriptor->get_full_path());
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 8, Descriptor::CALLRATE, descriptor->get_full_path(), 2);
 		} else if (thresholds->at(0) > thresholds->at(1)) {
 			swap_value = thresholds->at(0);
 			thresholds->at(0) = thresholds->at(1);
@@ -337,10 +345,14 @@ void GwaFile::check_separators(Descriptor* descriptor) throw (GwaFileException) 
 
 	try {
 		if ((separator_name = descriptor->get_property(Descriptor::SEPARATOR)) == NULL) {
-			TextReader reader;
-			reader.set_file_name(descriptor->get_full_path());
-			reader.detect_field_separators(&header_separator, &data_separator);
-			reader.close();
+			Reader* reader = NULL;
+
+			reader = ReaderFactory::create(descriptor->get_full_path());
+			reader->detect_field_separators(&header_separator, &data_separator);
+			reader->close();
+
+			delete reader;
+			reader = NULL;
 		} else if ((strcmp_ignore_case(separator_name, Descriptor::COMMA) == 0) ||
 				(strcmp_ignore_case(separator_name, Descriptor::COMMAS) == 0)) {
 			header_separator = ',';
@@ -556,6 +568,108 @@ void GwaFile::check_map_file_separators(Descriptor* descriptor) throw (GwaFileEx
 	} catch (Exception &e) {
 		GwaFileException new_e(e);
 		new_e.add_message("GwaFile", "check_map_file_separators( Descriptor* )", __LINE__, 10, descriptor->get_full_path());
+		throw new_e;
+	}
+}
+
+void GwaFile::check_ld_files(Descriptor* descriptor) throw (GwaFileException) {
+	if (descriptor == NULL) {
+		throw GwaFileException("GwaFile", "check_ld_files( Descriptor* )", __LINE__, 0, "descriptor");
+	}
+
+	if (descriptor->get_ld_files_number() <= 0) {
+		throw GwaFileException("GwaFile", "check_ld_files( Descriptor )", __LINE__, 14, Descriptor::LD_FILE, descriptor->get_full_path());
+	}
+}
+
+void GwaFile::check_ld_files_separators(Descriptor* descriptor) throw (GwaFileException) {
+	const char* separator_name = NULL;
+	vector<const char*>* names = NULL;
+	vector<const char*>::iterator names_it;
+	const char* path = NULL;
+	Reader* reader = NULL;
+
+	char ld_file_header_separator = '\0';
+	char ld_file_data_separator = '\0';
+
+	if (descriptor == NULL) {
+		throw GwaFileException("GwaFile", "check_ld_files_separators( Descriptor* )", __LINE__, 0, "descriptor");
+	}
+
+	try {
+		if ((separator_name = descriptor->get_property(Descriptor::LD_FILE_SEPARATOR)) == NULL) {
+			names = descriptor->get_ld_files();
+			if ((names == NULL) || (names->size() <= 0)) {
+				throw GwaFileException("GwaFile", "check_ld_files_separators( Descriptor* )", __LINE__, 14, Descriptor::LD_FILE, descriptor->get_full_path());
+			}
+
+			names_it = names->begin();
+
+			reader = ReaderFactory::create(descriptor->get_ld_file(*names_it));
+			reader->detect_field_separators(&(this->ld_file_header_separator), &(this->ld_file_data_separator));
+			reader->close();
+			delete reader;
+			reader = NULL;
+
+			names_it++;
+
+			while (names_it != names->end()) {
+				path = descriptor->get_ld_file(*names_it);
+				reader = ReaderFactory::create(path);
+				reader->detect_field_separators(&ld_file_header_separator, &ld_file_data_separator);
+				reader->close();
+				delete reader;
+				reader = NULL;
+
+				if ((ld_file_header_separator != this->ld_file_header_separator) || (ld_file_data_separator != this->ld_file_data_separator)) {
+					throw GwaFileException("GwaFile", "check_ld_files_separators( Descriptor* )", __LINE__, 15, path, Descriptor::LD_FILE, descriptor->get_full_path());
+				}
+
+				names_it++;
+			}
+
+			delete names;
+			names = NULL;
+		} else if ((strcmp_ignore_case(separator_name, Descriptor::COMMA) == 0) ||
+				(strcmp_ignore_case(separator_name, Descriptor::COMMAS) == 0)) {
+			this->ld_file_header_separator = ',';
+			this->ld_file_data_separator = ',';
+		} else if (strcmp_ignore_case(separator_name, Descriptor::SEMICOLON) == 0) {
+			this->ld_file_header_separator = ';';
+			this->ld_file_data_separator = ';';
+		} else if ((strcmp_ignore_case(separator_name, Descriptor::TAB) == 0) ||
+				(strcmp_ignore_case(separator_name, Descriptor::TABULATION) == 0)) {
+			this->ld_file_header_separator = '\t';
+			this->ld_file_data_separator = '\t';
+		} else if (strcmp_ignore_case(separator_name, Descriptor::WHITESPACE) == 0) {
+			this->ld_file_header_separator = ' ';
+			this->ld_file_data_separator = ' ';
+		}
+	} catch (Exception &e) {
+		GwaFileException new_e(e);
+		new_e.add_message("GwaFile", "check_ld_files_separators( Descriptor* )", __LINE__, 10, descriptor->get_full_path());
+		throw new_e;
+	}
+}
+
+void GwaFile::check_ld_threshold(Descriptor* descriptor) throw (GwaFileException) {
+	vector<double>* thresholds = NULL;
+
+	if (descriptor == NULL) {
+		throw GwaFileException("GwaFile", "check_ld_threshold( Descriptor* )", __LINE__, 0, "descriptor");
+	}
+
+	try {
+		if ((thresholds = descriptor->get_threshold(Descriptor::LD)) == NULL) {
+			descriptor->add_threshold(Descriptor::LD, 0.3);
+		} else if (thresholds->size() < 1) {
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 7, Descriptor::LD, descriptor->get_full_path(), 1);
+		} else if (thresholds->size() > 1) {
+			throw GwaFileException("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 8, Descriptor::LD, descriptor->get_full_path(), 1);
+		}
+	} catch (DescriptorException &e) {
+		GwaFileException new_e(e);
+		new_e.add_message("GwaFile", "check_thresholds( Descriptor* )", __LINE__, 10, descriptor->get_full_path());
 		throw new_e;
 	}
 }

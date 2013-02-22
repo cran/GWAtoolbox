@@ -52,6 +52,7 @@ div.subsection {
 	background-color: #FFF7E3;
 	margin: 0px;
 	padding-bottom: 3px;
+	position: relative;
 }
 
 p.sectionname {
@@ -158,6 +159,12 @@ img {
 	border-width: 1px;
 	border-style: solid;
 	border-color: #C4A375;
+}
+
+button {
+	position: absolute; 
+	top: 0; 
+	right: 0;
 }
 
 #bigfigure {

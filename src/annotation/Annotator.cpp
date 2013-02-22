@@ -513,7 +513,7 @@ void Annotator::annotate_without_map() throw (AnnotatorException) {
 
 				position = (int)strtol(position_token, &end_ptr, 10);
 				if (*end_ptr != '\0') {
-					throw AnnotatorException("Annotator", "annotate_without_map()",  __LINE__, 10, position, ((column_name = descriptor->get_column(Descriptor::POSITION)) != NULL) ? column_name : Descriptor::POSITION, line_number);
+					throw AnnotatorException("Annotator", "annotate_without_map()",  __LINE__, 10, position_token, ((column_name = descriptor->get_column(Descriptor::POSITION)) != NULL) ? column_name : Descriptor::POSITION, line_number);
 				}
 
 				if (position < 0) {
@@ -619,7 +619,6 @@ void Annotator::annotate_with_map() throw (AnnotatorException) {
 	bool regions_append = false;
 
 	char* token = NULL;
-	char* end_ptr = NULL;
 
 	int column_position = 0;
 

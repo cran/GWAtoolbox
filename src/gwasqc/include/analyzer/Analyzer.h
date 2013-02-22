@@ -22,6 +22,7 @@
 
 #include <stdexcept>
 
+#include "../../../GWAtoolbox.h"
 #include "../../../auxiliary/include/auxiliary.h"
 #include "../../../reader/include/TextReader.h"
 #include "../../../gwafile/include/GwaFile.h"
@@ -41,11 +42,10 @@
 #include "../expressions/Lt.h"
 #include "AnalyzerException.h"
 
-#define VERSION	"GWAtoolbox(c) v2.1.2"
-
 class Analyzer {
 private:
-	TextReader reader;
+//	TextReader reader;
+	Reader* reader;
 	GwaFile* gwafile;
 
 	vector<Meta*> metas;

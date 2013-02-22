@@ -87,7 +87,7 @@ const char* Analyzer::MENU_FILE = "menu.html";
 const char* Analyzer::MAIN_FILE = "main.html";
 const char* Analyzer::BOXPLOTS_FILE = "boxplots.html";
 
-Analyzer::Analyzer() : gwafile(NULL) {
+Analyzer::Analyzer() : reader(NULL), gwafile(NULL) {
 
 }
 
@@ -144,9 +144,12 @@ void Analyzer::open_gwafile(GwaFile* gwafile) throw (AnalyzerException) {
 
 	try {
 		close_gwafile();
+
+		reader = ReaderFactory::create(gwafile->get_descriptor()->get_full_path());
+		reader->set_file_name(gwafile->get_descriptor()->get_full_path());
+		reader->open();
+
 		this->gwafile = gwafile;
-		reader.set_file_name(gwafile->get_descriptor()->get_full_path());
-		reader.open();
 	} catch (ReaderException& e) {
 		AnalyzerException new_e(e);
 		new_e.add_message("Analyzer", "open_gwafile( GwaFile* )", __LINE__, 3, gwafile->get_descriptor()->get_full_path());
@@ -165,7 +168,11 @@ void Analyzer::close_gwafile() throw (AnalyzerException) {
 	vector<MetaCrossTable*>::iterator cross_table_metas_it;
 
 	try {
-		reader.close();
+		if (reader != NULL) {
+			reader->close();
+			delete reader;
+			reader = NULL;
+		}
 	} catch (ReaderException &e) {
 		AnalyzerException new_e(e);
 		new_e.add_message("Analyzer", "close_gwafile()", __LINE__, 4, gwafile != NULL ? gwafile->get_descriptor()->get_full_path() : "NULL");
@@ -229,13 +236,13 @@ void Analyzer::process_header() throw (AnalyzerException) {
 	}
 
 	try {
-		if (reader.read_line() <= 0) {
+		if (reader->read_line() <= 0) {
 			throw AnalyzerException("Analyzer", "process_header()", __LINE__, 5, gwafile->get_descriptor()->get_full_path());
 		}
 
 		descriptor = gwafile->get_descriptor();
 		header_separator = gwafile->get_header_separator();
-		header = *reader.line;
+		header = *(reader->line);
 
 		if ((gwafile->get_estimated_size() > numeric_limits<unsigned int>::max()) ||
 				((heap_size = (unsigned int)gwafile->get_estimated_size()) == 0)) {
@@ -450,9 +457,9 @@ void Analyzer::process_data() throw (AnalyzerException) {
 	total_columns = metas.size();
 
 	try {
-		while ((line_length = reader.read_line()) > 0) {
+		while ((line_length = reader->read_line()) > 0) {
 			column_number = 0;
-			line = *reader.line;
+			line = *(reader->line);
 			while ((token = auxiliary::strtok(&line, data_separator)) != NULL) {
 				if ((meta = metas.at(column_number)) != NULL) {
 					meta->put(token);
@@ -2288,6 +2295,7 @@ void Analyzer::print_html_report(char** html_report_path, vector<Plot*>& plots, 
 					o_htmlfile_stream << "<p class = \"subsectionname\">";
 					o_htmlfile_stream << section << "." << subsection << ") " << (*metas_it)->get_actual_name();
 					o_htmlfile_stream << "</p>";
+					o_htmlfile_stream << "<button onclick=\"minmax(this);\">-</button>";
 					(*metas_it)->print_html(o_htmlfile_stream, gwafile->get_descriptor()->get_path_separator());
 					o_htmlfile_stream << "</div>";
 					print = false;
@@ -2346,6 +2354,7 @@ void Analyzer::print_html_report(char** html_report_path, vector<Plot*>& plots, 
 						o_htmlfile_stream << " " << (*metas_it)->get_actual_name();
 					}
 					o_htmlfile_stream << "</p>";
+					o_htmlfile_stream << "<button onclick=\"minmax(this);\">-</button>";
 					(*metas_it)->print_html(o_htmlfile_stream, gwafile->get_descriptor()->get_path_separator());
 					o_htmlfile_stream << "</div>";
 					break;
@@ -2366,6 +2375,7 @@ void Analyzer::print_html_report(char** html_report_path, vector<Plot*>& plots, 
 						o_htmlfile_stream << " " << (*metas_it)->get_actual_name();
 					}
 					o_htmlfile_stream << "</p>";
+					o_htmlfile_stream << "<button onclick=\"minmax(this);\">-</button>";
 					(*metas_it)->print_html(o_htmlfile_stream, gwafile->get_descriptor()->get_path_separator());
 					o_htmlfile_stream << "</div>";
 					break;
@@ -2386,6 +2396,7 @@ void Analyzer::print_html_report(char** html_report_path, vector<Plot*>& plots, 
 						o_htmlfile_stream << " " << (*metas_it)->get_actual_name();
 					}
 					o_htmlfile_stream << "</p>";
+					o_htmlfile_stream << "<button onclick=\"minmax(this);\">-</button>";
 					(*metas_it)->print_html(o_htmlfile_stream, gwafile->get_descriptor()->get_path_separator());
 					o_htmlfile_stream << "</div>";
 					break;
@@ -2406,6 +2417,7 @@ void Analyzer::print_html_report(char** html_report_path, vector<Plot*>& plots, 
 						o_htmlfile_stream << " " << (*metas_it)->get_actual_name();
 					}
 					o_htmlfile_stream << "</p>";
+					o_htmlfile_stream << "<button onclick=\"minmax(this);\">-</button>";
 					(*metas_it)->print_html(o_htmlfile_stream, gwafile->get_descriptor()->get_path_separator());
 					o_htmlfile_stream << "</div>";
 					break;
@@ -2426,6 +2438,7 @@ void Analyzer::print_html_report(char** html_report_path, vector<Plot*>& plots, 
 						o_htmlfile_stream << " " << (*metas_it)->get_actual_name();
 					}
 					o_htmlfile_stream << "</p>";
+					o_htmlfile_stream << "<button onclick=\"minmax(this);\">-</button>";
 					(*metas_it)->print_html(o_htmlfile_stream, gwafile->get_descriptor()->get_path_separator());
 					o_htmlfile_stream << "</div>";
 					break;
@@ -2446,6 +2459,7 @@ void Analyzer::print_html_report(char** html_report_path, vector<Plot*>& plots, 
 						o_htmlfile_stream << " " << (*metas_it)->get_actual_name();
 					}
 					o_htmlfile_stream << "</p>";
+					o_htmlfile_stream << "<button onclick=\"minmax(this);\">-</button>";
 					(*metas_it)->print_html(o_htmlfile_stream, gwafile->get_descriptor()->get_path_separator());
 
 					print = false;
@@ -2508,6 +2522,7 @@ void Analyzer::print_html_report(char** html_report_path, vector<Plot*>& plots, 
 						o_htmlfile_stream << " " << (*metas_it)->get_actual_name();
 					}
 					o_htmlfile_stream << "</p>";
+					o_htmlfile_stream << "<button onclick=\"minmax(this);\">-</button>";
 					(*metas_it)->print_html(o_htmlfile_stream, gwafile->get_descriptor()->get_path_separator());
 					o_htmlfile_stream << "</div>";
 				}
@@ -2520,6 +2535,7 @@ void Analyzer::print_html_report(char** html_report_path, vector<Plot*>& plots, 
 			o_htmlfile_stream << "<p class = \"subsectionname\">";
 			o_htmlfile_stream << section << "." << subsection << ") " << (*cross_table_metas_it)->get_full_name();
 			o_htmlfile_stream << "</p>";
+			o_htmlfile_stream << "<button onclick=\"minmax(this);\">-</button>";
 			(*cross_table_metas_it)->print_html(o_htmlfile_stream, gwafile->get_descriptor()->get_path_separator());
 			o_htmlfile_stream << "</div>";
 		}

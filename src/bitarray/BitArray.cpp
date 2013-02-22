@@ -82,8 +82,8 @@ unsigned long int BitArray::get_total_bytes() {
 }
 
 void BitArray::filter(const double* data, double* filtered_data, unsigned long int size) throw (BitArrayException) {
-	unsigned long int upper_byte = size >> 3;
-	unsigned long int current_chuck = 0;
+	unsigned long int upper_byte = bit_array_size >> 3;
+	unsigned long int current_chunk = 0;
 	unsigned long int current_filtered = 0;
 
 	if (data == NULL) {
@@ -98,15 +98,15 @@ void BitArray::filter(const double* data, double* filtered_data, unsigned long i
 		throw BitArrayException("BitArray", "filter( const double* , double* , unsigned long int )", __LINE__, 1, "size");
 	}
 
-	if (size > bit_array_size) {
-		throw BitArrayException("BitArray", "filter( const double* , double* , unsigned long int )", __LINE__, 1, "size");
-	}
-
-	for (unsigned long int i = 0; i <= upper_byte; i++) {
-		current_chuck = i * 8;
-		for (unsigned int j = 0; j < 8; j++) {
+	for (unsigned long int i = 0u; i < upper_byte; ++i) {
+		current_chunk = i * 8;
+		for (unsigned int j = 0u; j < 8u; ++j) {
 			if ((bit_array[i] & (0x80 >> j)) != 0x00) {
-				filtered_data[current_filtered] = data[current_chuck + j];
+				if (current_chunk + j >= size) {
+					throw BitArrayException("BitArray", "filter( const double* , double* , unsigned long int )", __LINE__, 1, "size");
+				}
+
+				filtered_data[current_filtered] = data[current_chunk + j];
 				current_filtered += 1;
 			}
 		}

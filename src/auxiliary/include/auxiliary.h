@@ -35,6 +35,8 @@ namespace auxiliary {
 
 	int strcmp_ignore_case(const char* first, const char* second);
 
+	int strcmp_ignore_case(const char* first, const char* second, int n);
+
 	inline bool is_absolute_path(const char* path, char path_separator) {
 		if (path == NULL) {
 			return false;
@@ -146,6 +148,40 @@ namespace auxiliary {
 		}
 
 		return numeric_limits<double>::quiet_NaN();
+	}
+
+	inline void trim_end(char* string) {
+		int j = strlen(string) - 1;
+
+		while ((j >= 0) && ((string[j] == ' ') || (string[j] == '\t'))) {
+			j--;
+		}
+
+		string[j + 1] = '\0';
+	}
+
+	inline void trim_start(char* string) {
+		int i = 0;
+		int j = strlen(string);
+
+		while ((string[i] == ' ') || (string[i] == '\t')) {
+			i++;
+		}
+
+		memmove(string, string + i, j - i);
+		string[j - i] = '\0';
+	}
+
+	inline unsigned long int to_ulong_int(const char* value, unsigned long int* ulong_int) {
+		if ((value != NULL) && (strlen(value) <= 0)) {
+			return false;
+		}
+
+		char* end_ptr = NULL;
+
+		*ulong_int = strtol(value, &end_ptr, 10);
+
+		return (*end_ptr == '\0');
 	}
 }
 

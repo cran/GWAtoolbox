@@ -38,7 +38,7 @@ gwasqc <- function(script) {
 		file_separator <- .Platform$file.sep
 	}
 		
-	resource_path <- paste(.path.package("GWAtoolbox"), "extdata/", sep="/")
+	resource_path <- paste(path.package("GWAtoolbox"), "extdata/", sep="/")
 	
 	cat("Processing input script... ")
 	start_time <- proc.time()

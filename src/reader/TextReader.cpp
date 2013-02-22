@@ -19,7 +19,7 @@
 
 #include "include/TextReader.h"
 
-const unsigned int TextReader::DEFAULT_BUFFER_SIZE = 8000;
+const unsigned int TextReader::DEFAULT_BUFFER_SIZE = 16777216;
 const unsigned int TextReader::TOP_ROWS_NUMBER = 10;
 const unsigned int TextReader::ROWS_SAMPLE_SIZE = 30;
 const unsigned int TextReader::ROWS_SAMPLE_COUNT = 15;
@@ -55,7 +55,7 @@ void TextReader::open() throw (ReaderException) {
 	ifile_stream.open(file_name, ios::binary);
 
 	if (ifile_stream.fail()) {
-		throw ReaderException("TextTableReader", "open()", __LINE__, 3, file_name);
+		throw ReaderException("TextReader", "open()", __LINE__, 3, file_name);
 	}
 }
 
@@ -65,7 +65,7 @@ void TextReader::close() throw (ReaderException) {
 		ifile_stream.close();
 
 		if (ifile_stream.fail()) {
-			throw ReaderException("TextTableReader", "open()", __LINE__, 5, file_name);
+			throw ReaderException("TextReader", "open()", __LINE__, 5, file_name);
 		}
 	}
 
@@ -117,6 +117,10 @@ void TextReader::reset() throw (ReaderException) {
 
 bool TextReader::eof() {
 	return ifile_stream.eof();
+}
+
+bool TextReader::sof() {
+	return ifile_stream.tellg() == std::ifstream::pos_type(0);
 }
 
 bool TextReader::is_open() {

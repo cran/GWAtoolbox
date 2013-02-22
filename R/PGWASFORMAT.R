@@ -63,9 +63,9 @@ pgwasformat <- function(script, logfile, processes) {
 		stop("The number of processes argument must be numeric.")
 	}
 	
-	snow_library <- suppressWarnings(require(snow, quietly = TRUE));
-	if (!snow_library) {
-		stop("Error while loading 'snow' package. Check if the package is installed.");
+	parallel_library <- suppressWarnings(require(parallel, quietly = TRUE));
+	if (!parallel_library) {
+		stop("Error while loading 'parallel' package. Check if the package is installed.");
 	}
 	
 	file_separator <- ""
@@ -97,9 +97,9 @@ pgwasformat <- function(script, logfile, processes) {
 	cat("Initializing cluster... ")
 	start_time <- proc.time()
 	
-	clusters <- makeCluster(rep("localhost", processes), type="SOCK")
-	assign("gwatoolbox_package_path", dirname(.path.package("GWAtoolbox")), envir = .GlobalEnv)
-	clusterExport(clusters, "gwatoolbox_package_path")
+	clusters <- makeCluster(rep("localhost", processes), type="PSOCK")
+	gwatoolbox_package_path <- dirname(path.package("GWAtoolbox"))
+	clusterExport(clusters, "gwatoolbox_package_path", envir=environment())
 	clusterEvalQ(clusters, .libPaths(union(gwatoolbox_package_path, .libPaths())))
 	clusterEvalQ(clusters, library(GWAtoolbox))
 	

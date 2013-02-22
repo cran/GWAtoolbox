@@ -35,7 +35,7 @@
 #include <string.h>
 
 #include "../../auxiliary/include/auxiliary.h"
-#include "../../reader/include/TextReader.h"
+#include "../../reader/include/ReaderFactory.h"
 #include "DescriptorException.h"
 
 #include "R.h"
@@ -62,6 +62,7 @@ private:
 	map<const char* const, vector<double>*, bool(*)(const char*, const char*)> thresholds;
 	map<const char* const, char*, bool(*)(const char*, const char*)> renamed_columns;
 	vector<const char*> reordered_columns;
+	map<const char* const, char*, bool(*)(const char*, const char*)> ld_files;
 
 	map<const char* const, char*, bool(*)(const char*, const char*)>::iterator map_char_it;
 	map<const char* const, vector<double>*, bool(*)(const char*, const char*)>::iterator map_vect_it;
@@ -114,6 +115,7 @@ public:
 	static const char* MAF;
 	static const char* IMP;
 	static const char* SNP_HQ;
+	static const char* LD;
 
 	static const char* ANALYZE;
 	static const char* BOXPLOTWIDTH;
@@ -143,6 +145,13 @@ public:
 	static const char* MAP_MARKER;
 	static const char* MAP_CHR;
 	static const char* MAP_POSITION;
+
+	static const char* LD_FILE;
+	static const char* LD_FILE_SEPARATOR;
+	static const char* LD_MARKER;
+	static const char* LD_MARKER1;
+	static const char* LD_MARKER2;
+	static const char* LD_VALUE;
 
 	static const char* COMMA;
 	static const char* COMMAS;
@@ -174,10 +183,13 @@ public:
 	const char* get_renamed_column(const char* name) throw (DescriptorException);
 	int get_column_order(const char* name, bool case_sensitive) throw (DescriptorException);
 	vector<const char*>* get_reordered_columns();
+	const char* get_ld_file(const char* name) throw (DescriptorException);
+	vector<const char*>* get_ld_files();
 	int get_columns_number();
 	int get_properties_number();
 	int get_thresholds_number();
 	int get_reordered_columns_number();
+	int get_ld_files_number();
 
 	void set_full_path(const char* full_path, char path_separator = DEFAULT_PATH_SEPARATOR) throw (DescriptorException);
 
@@ -190,13 +202,14 @@ public:
 	void add_threshold(const char* name, const char* numeric_value) throw (DescriptorException);
 	void add_renamed_column(const char* name, const char* new_name) throw (DescriptorException);
 	void add_reordered_column(const char* name) throw (DescriptorException);
+	void add_ld_file(const char* name, const char* path) throw (DescriptorException);
 
 	bool remove_column(const char* common_name) throw (DescriptorException);
 	bool remove_property(const char* name) throw (DescriptorException);
 	bool remove_threshold(const char* name) throw (DescriptorException);
 	bool remove_renamed_column(const char* name) throw (DescriptorException);
-
 	void remove_reordered_columns();
+	bool remove_ld_file(const char* name) throw (DescriptorException);
 
 	static vector<Descriptor*>* process_instructions(const char* script_name, char path_separator = DEFAULT_PATH_SEPARATOR) throw (DescriptorException);
 

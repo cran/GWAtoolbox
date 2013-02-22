@@ -1,5 +1,5 @@
 #
-# Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+# Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
 #
 # This file is part of GWAtoolbox.
 #
@@ -44,7 +44,9 @@ endif
 GWADIRS = 	auxiliary \
 			exception \
 			bitarray \
+			zlib \
 			reader \
+			writer \
 			descriptor \
 			gwafile \
 			gwasformat/libs/columns \
@@ -54,12 +56,16 @@ GWADIRS = 	auxiliary \
 			gwasqc/libs/plots \
 			gwasqc/libs/analyzer \
 			intervaltree \
-			annotation
+			annotation \
+			harmonization \
+			independization
 
 GWALIBS = 	auxiliary/*.o \
 			exception/*.o \
 			bitarray/*.o \
+			zlib/*.o \
 			reader/*.o \
+			writer/*.o \
 			descriptor/*.o \
 			gwafile/*.o \
 			gwasformat/libs/columns/*.o \
@@ -69,11 +75,14 @@ GWALIBS = 	auxiliary/*.o \
 			gwasqc/libs/plots/*.o \
 			gwasqc/libs/analyzer/*.o \
 			intervaltree/*.o \
-			annotation/*.o
+			annotation/*.o \
+			harmonization/*.o \
+			independization/*.o
 			
 .PHONY: all gwalibs
      
 all: $(SHLIB)
+
 $(SHLIB): gwalibs
 
 gwalibs:	subclean

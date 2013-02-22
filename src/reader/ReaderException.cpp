@@ -19,7 +19,7 @@
 
 #include "include/ReaderException.h"
 
-const int ReaderException::MESSAGE_TEMPLATES_NUMBER = 10;
+const int ReaderException::MESSAGE_TEMPLATES_NUMBER = 11;
 const char* ReaderException::MESSAGE_TEMPLATES[] = {
 /*00*/	"The '%s' argument has NULL value.",
 /*01*/	"The '%s' argument has an invalid value.",
@@ -30,7 +30,8 @@ const char* ReaderException::MESSAGE_TEMPLATES[] = {
 /*06*/	"Error while setting the read position in '%s' file.",
 /*07*/	"Error while inspecting lines in '%s' file.",
 /*08*/	"Failed to automatically detect the field separator in '%s' file.",
-/*09*/	"Error while getting the read position in '%s' file."
+/*09*/	"Error while getting the read position in '%s' file.",
+/*10*/	"Error while initializing reading facilities for '%s' file."
 };
 
 ReaderException::ReaderException() : Exception() {

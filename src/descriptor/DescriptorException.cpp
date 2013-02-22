@@ -19,7 +19,7 @@
 
 #include "include/DescriptorException.h"
 
-const int DescriptorException::MESSAGE_TEMPLATES_NUMBER = 20;
+const int DescriptorException::MESSAGE_TEMPLATES_NUMBER = 23;
 const char* DescriptorException::MESSAGE_TEMPLATES[] = {
 /*00*/	"The '%s' argument has NULL value.",
 /*01*/	"The '%s' argument has an invalid value.",
@@ -40,7 +40,10 @@ const char* DescriptorException::MESSAGE_TEMPLATES[] = {
 /*16*/	"Error while adding a new column name to an instance of the Descriptor class.",
 /*17*/	"Error while removing a new column name from an instance of the Descriptor class.",
 /*18*/	"Error while retrieving a new column name from an instance of the Descriptor class.",
-/*19*/	"Error while adding a column to the ordered list of columns in the Descriptor class."
+/*19*/	"Error while adding a column to the ordered list of columns in the Descriptor class.",
+/*20*/	"Error while adding an LD file name to an instance of the Descriptor class.",
+/*21*/	"Error while removing an LD file name from an instance of the Descriptor class.",
+/*22*/	"Error while retrieving an LD file path from an instance of the Descriptor class."
 };
 
 DescriptorException::DescriptorException() : Exception() {

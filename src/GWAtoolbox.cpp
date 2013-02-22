@@ -29,6 +29,8 @@
 #include "gwasqc/include/analyzer/Analyzer.h"
 #include "gwasformat/include/formatter/Formatter.h"
 #include "annotation/include/Annotator.h"
+#include "harmonization/include/Harmonizer.h"
+#include "independization/include/Selector.h"
 
 /* Define LINUX flag for compilation under Linux */
 #ifndef WIN32
@@ -109,11 +111,11 @@ SEXP process_script(SEXP script_name, SEXP path_separator) {
 	PROTECT(descriptors_list = allocVector(VECSXP, descriptors->size()));
 
 	for (unsigned int i = 0; i < descriptors->size(); i++) {
-		external_descriptor_pointer = R_MakeExternalPtr((void*)descriptors->at(i), R_NilValue, R_NilValue);
+		PROTECT(external_descriptor_pointer = R_MakeExternalPtr((void*)descriptors->at(i), R_NilValue, R_NilValue));
 		SET_VECTOR_ELT(descriptors_list, i, external_descriptor_pointer);
 	}
 
-	UNPROTECT(1);
+	UNPROTECT(1 + descriptors->size());
 
 	return descriptors_list;
 }
@@ -141,6 +143,7 @@ SEXP Descriptor2Robj(SEXP external_descriptor_pointer) {
 	SEXP threshold_value = R_NilValue;
 	SEXP renamed_columns = R_NilValue;
 	SEXP reordered_columns = R_NilValue;
+	SEXP ld_files = R_NilValue;
 
 	if (external_descriptor_pointer == R_NilValue) {
 		error("\nThe external Descriptor pointer argument is NULL.");
@@ -152,7 +155,7 @@ SEXP Descriptor2Robj(SEXP external_descriptor_pointer) {
 
 	descriptor = (Descriptor*)R_ExternalPtrAddr(external_descriptor_pointer);
 
-	PROTECT(attributes = allocVector(STRSXP, 10));
+	PROTECT(attributes = allocVector(STRSXP, 11));
 	SET_STRING_ELT(attributes, 0, mkChar("path_separator"));
 	SET_STRING_ELT(attributes, 1, mkChar("name"));
 	SET_STRING_ELT(attributes, 2, mkChar("path"));
@@ -163,11 +166,12 @@ SEXP Descriptor2Robj(SEXP external_descriptor_pointer) {
 	SET_STRING_ELT(attributes, 7, mkChar("thresholds"));
 	SET_STRING_ELT(attributes, 8, mkChar("renamed_columns"));
 	SET_STRING_ELT(attributes, 9, mkChar("reordered_columns"));
+	SET_STRING_ELT(attributes, 10, mkChar("ld_files"));
 
 	PROTECT(class_name = allocVector(STRSXP, 1));
 	SET_STRING_ELT(class_name, 0, mkChar("Descriptor"));
 
-	PROTECT(descriptor_robj = allocVector(VECSXP, 10));
+	PROTECT(descriptor_robj = allocVector(VECSXP, 11));
 
 	PROTECT(path_separator = allocVector(STRSXP, 1));
 	buffer[0] = descriptor->get_path_separator();
@@ -291,6 +295,21 @@ SEXP Descriptor2Robj(SEXP external_descriptor_pointer) {
 		UNPROTECT(1);
 	}
 
+	if (descriptor->ld_files.size() > 0) {
+		PROTECT(ld_files = allocMatrix(STRSXP, descriptor->ld_files.size(), 2));
+
+		descriptor->map_char_it = descriptor->ld_files.begin();
+		i = 0;
+		while (descriptor->map_char_it != descriptor->ld_files.end()) {
+			SET_STRING_ELT(ld_files, i, mkChar(descriptor->map_char_it->first));
+			SET_STRING_ELT(ld_files, i + descriptor->ld_files.size(), mkChar(descriptor->map_char_it->second));
+			i += 1;
+			descriptor->map_char_it++;
+		}
+
+		UNPROTECT(1);
+	}
+
 	SET_VECTOR_ELT(descriptor_robj, 0, path_separator);
 	SET_VECTOR_ELT(descriptor_robj, 1, name);
 	SET_VECTOR_ELT(descriptor_robj, 2, path);
@@ -301,6 +320,7 @@ SEXP Descriptor2Robj(SEXP external_descriptor_pointer) {
 	SET_VECTOR_ELT(descriptor_robj, 7, thresholds);
 	SET_VECTOR_ELT(descriptor_robj, 8, renamed_columns);
 	SET_VECTOR_ELT(descriptor_robj, 9, reordered_columns);
+	SET_VECTOR_ELT(descriptor_robj, 10, ld_files);
 
 	setAttrib(descriptor_robj, R_NamesSymbol, attributes);
 	setAttrib(descriptor_robj, R_ClassSymbol, class_name);
@@ -345,6 +365,7 @@ SEXP Robj2Descriptor(SEXP descriptor_Robj) {
 	SEXP threshold_value = R_NilValue;
 	SEXP renamed_columns = R_NilValue;
 	SEXP reordered_columns = R_NilValue;
+	SEXP ld_files = R_NilValue;
 
 	int ncol = 0;
 
@@ -498,6 +519,19 @@ SEXP Robj2Descriptor(SEXP descriptor_Robj) {
 						descriptor->add_reordered_column(CHAR(STRING_ELT(reordered_columns, j)));
 					}
 				}
+			} else if (strcmp(value, "ld_files") == 0) {
+				ld_files = VECTOR_ELT(descriptor_Robj, i);
+				if (ld_files != R_NilValue) {
+					if (!isMatrix(ld_files)) {
+						error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
+					}
+					if ((ncol = length(ld_files)) % 2 != 0) {
+						error("\nMismatch in Descriptor class structure on line %d.", __LINE__);
+					}
+					for (int j = 0; j < ncol / 2; j++) {
+						descriptor->add_ld_file(CHAR(STRING_ELT(ld_files, j)), CHAR(STRING_ELT(ld_files, j + ncol / 2)));
+					}
+				}
 			}
 		}
 
@@ -520,7 +554,8 @@ SEXP Robj2Descriptor(SEXP descriptor_Robj) {
 		error("\n%s", e.what());
 	}
 
-	external_descriptor_pointer = R_MakeExternalPtr((void*)descriptor, R_NilValue, R_NilValue);
+	PROTECT(external_descriptor_pointer = R_MakeExternalPtr((void*)descriptor, R_NilValue, R_NilValue));
+	UNPROTECT(1);
 
 	return external_descriptor_pointer;
 }
@@ -1242,9 +1277,6 @@ SEXP perform_annotation(SEXP external_descriptor_pointer) {
 			&GwaFile::check_map_file_separators
 	};
 
-	clock_t start_time = 0;
-	double execution_time = 0.0;
-
 	if (external_descriptor_pointer == R_NilValue) {
 		error("\nThe external Descriptor pointer argument is NULL.");
 	}
@@ -1280,6 +1312,265 @@ SEXP perform_annotation(SEXP external_descriptor_pointer) {
 	return R_NilValue;
 }
 
+SEXP perform_id_harmonization(SEXP input_file_name, SEXP output_file_name, SEXP map_file_name, SEXP id_column_name, SEXP allele_column_names, SEXP separator, SEXP drop, SEXP gzip) {
+	const char* c_input_file_name = NULL;
+	const char* c_output_file_name = NULL;
+	const char* c_map_file_name = NULL;
+	const char* c_id_column_name = NULL;
+	const char* c_ref_allele_column_name = NULL;
+	const char* c_nonref_allele_column_name = NULL;
+	const char* c_separator = NULL;
+	int c_drop = 0;
+	int c_gzip = 0;
+
+	if (input_file_name == R_NilValue) {
+		error("\nThe input file name is NULL.");
+	}
+
+	if (!isString(input_file_name)) {
+		error("\nThe input file name is not a string.");
+	}
+
+	if (length(input_file_name) <= 0) {
+		error("\nThe input file name is empty.");
+	}
+
+	if (length(input_file_name) > 1) {
+		error("\nThe input file name has multiple values.");
+	}
+
+	c_input_file_name = CHAR(STRING_ELT(input_file_name, 0));
+	if ((strlen(c_input_file_name) <= 0) || (strspn(c_input_file_name, " \t") == strlen(c_input_file_name))) {
+		error("\nThe input file name is blank.");
+	}
+
+	if (output_file_name == R_NilValue) {
+		error("\nThe output file name is NULL.");
+	}
+
+	if (!isString(output_file_name)) {
+		error("\nThe output file name is not a string.");
+	}
+
+	if (length(output_file_name) <= 0) {
+		error("\nThe output file name is empty.");
+	}
+
+	if (length(output_file_name) > 1) {
+		error("\nThe output file name has multiple values.");
+	}
+
+	c_output_file_name = CHAR(STRING_ELT(output_file_name, 0));
+	if ((strlen(c_output_file_name) <= 0) || (strspn(c_output_file_name, " \t") == strlen(c_output_file_name))) {
+		error("\nThe input file name is blank.");
+	}
+
+	if (map_file_name == R_NilValue) {
+		error("\nThe map file name is NULL.");
+	}
+
+	if (!isString(map_file_name)) {
+		error("\nThe map file name is not a string.");
+	}
+
+	if (length(map_file_name) <= 0) {
+		error("\nThe map file name is empty.");
+	}
+
+	if (length(map_file_name) > 1) {
+		error("\nThe map file name has multiple values.");
+	}
+
+	c_map_file_name = CHAR(STRING_ELT(map_file_name, 0));
+	if ((strlen(c_map_file_name) <= 0) || (strspn(c_map_file_name, " \t") == strlen(c_map_file_name))) {
+		error("\nThe input file name is blank.");
+	}
+
+	if (id_column_name == R_NilValue) {
+		error("\nThe SNP ID column name is NULL.");
+	}
+
+	if (!isString(id_column_name)) {
+		error("\nThe SNP ID column name is not a string.");
+	}
+
+	if (length(id_column_name) <= 0) {
+		error("\nThe SNP ID column name is empty.");
+	}
+
+	if (length(id_column_name) > 1) {
+		error("\nThe SNP ID column name has multiple values.");
+	}
+
+	c_id_column_name = CHAR(STRING_ELT(id_column_name, 0));
+	if ((strlen(c_id_column_name) <= 0) || (strspn(c_id_column_name, " \t") == strlen(c_id_column_name))) {
+		error("\nThe SNP ID column name is blank.");
+	}
+
+	if (allele_column_names == R_NilValue) {
+		error("\nThe allele column names argument is NULL.");
+	}
+
+	if (!isString(allele_column_names)) {
+		error("\nThe allele column names must be a character vector.");
+	}
+
+	if (length(allele_column_names) != 2) {
+		error("\nThe allele column names must be a character vector of length 2.");
+	}
+
+	c_ref_allele_column_name = CHAR(STRING_ELT(allele_column_names, 0));
+	if ((strlen(c_ref_allele_column_name) <= 0) || (strspn(c_ref_allele_column_name, " \t") == strlen(c_ref_allele_column_name))) {
+		error("\nThe reference allele column name is blank.");
+	}
+
+	c_nonref_allele_column_name = CHAR(STRING_ELT(allele_column_names, 1));
+	if ((strlen(c_nonref_allele_column_name) <= 0) || (strspn(c_nonref_allele_column_name, " \t") == strlen(c_nonref_allele_column_name))) {
+		error("\nThe non-reference allele column name is blank.");
+	}
+
+	if (separator == R_NilValue) {
+		error("\nThe field separator character is NULL.");
+	}
+
+	if (!isString(separator)) {
+		error("\nThe field separator is not a character.");
+	}
+
+	if (length(separator) <= 0) {
+		error("\nThe field separator character is empty.");
+	}
+
+	if (length(separator) > 1) {
+		error("\nThe field separator character has multiple values.");
+	}
+
+	c_separator = CHAR(STRING_ELT(separator, 0));
+	if (strlen(c_separator) != 1) {
+		error("\nThe field separator must be a single character.");
+	}
+
+	if (drop == R_NilValue) {
+		error("\nThe 'drop' argument is NULL.");
+	}
+
+	if (!isLogical(drop)) {
+		error("\nThe 'drop' argument is not logical.");
+	}
+
+	if (length(drop) <= 0) {
+		error("\nThe 'drop' argument is empty.");
+	}
+
+	if (length(drop) > 1) {
+		error("\nThe 'drop' argument has multiple values.");
+	}
+
+	c_drop = LOGICAL(drop)[0];
+
+	if (gzip == R_NilValue) {
+		error("\nThe 'gzip' argument is NULL.");
+	}
+
+	if (!isLogical(gzip)) {
+		error("\nThe 'gzip' argument is not logical.");
+	}
+
+	if (length(gzip) <= 0) {
+		error("\nThe 'gzip' argument is empty.");
+	}
+
+	if (length(gzip) > 1) {
+		error("\nThe 'gzip' argument has multiple values.");
+	}
+
+	c_gzip = LOGICAL(gzip)[0];
+
+	try {
+		Harmonizer harmonizer;
+
+		harmonizer.open_file(c_input_file_name, c_id_column_name, c_ref_allele_column_name, c_nonref_allele_column_name, c_separator[0u]);
+
+		harmonizer.process_header();
+		harmonizer.index_map(c_map_file_name);
+		harmonizer.harmonize(c_output_file_name, c_drop, c_gzip);
+
+		harmonizer.close_file();
+	} catch (Exception &e) {
+		error("\n%s", e.what());
+	}
+
+	return R_NilValue;
+}
+
+SEXP perform_snps_independization(SEXP external_descriptor_pointer) {
+	Descriptor* descriptor = NULL;
+	GwaFile* gwa_file = NULL;
+
+	void (GwaFile::*check_functions[7])(Descriptor*) = {
+			&GwaFile::check_prefix,
+			&GwaFile::check_casesensitivity,
+			&GwaFile::check_missing_value,
+			&GwaFile::check_separators,
+			&GwaFile::check_ld_files,
+			&GwaFile::check_ld_files_separators,
+			&GwaFile::check_ld_threshold
+	};
+
+	if (external_descriptor_pointer == R_NilValue) {
+		error("\nThe external Descriptor pointer argument is NULL.");
+	}
+
+	if (TYPEOF(external_descriptor_pointer) != EXTPTRSXP) {
+		error("\nThe external Descriptor pointer argument has an incorrect type.");
+	}
+
+	descriptor = (Descriptor*)R_ExternalPtrAddr(external_descriptor_pointer);
+
+	try {
+		Selector selector;
+
+		gwa_file = new GwaFile(descriptor, check_functions, 7);
+
+		selector.open_gwafile(gwa_file);
+		selector.process_header();
+		selector.process_data();
+
+		selector.independize();
+
+		selector.close_gwafile();
+
+		delete gwa_file;
+		gwa_file = NULL;
+	} catch (Exception &e) {
+		error("\n%s", e.what());
+	}
+
+/*	try {
+		Annotator annotator;
+
+		gwa_file = new GwaFile(descriptor, check_functions, 8);
+
+		annotator.open_gwafile(gwa_file);
+		annotator.process_header();
+
+		if (annotator.is_map_present()) {
+			annotator.index_map();
+		}
+		annotator.index_regions();
+
+		annotator.annotate();
+
+		annotator.close_gwafile();
+
+		delete gwa_file;
+	} catch (Exception &e) {
+		error("\n%s", e.what());
+	} */
+
+	return R_NilValue;
+}
+
 }
 
 /*
@@ -1290,126 +1581,6 @@ SEXP perform_annotation(SEXP external_descriptor_pointer) {
  *		argv[1]	--	METAL-like script file name
  */
 int main(int args, char** argv) {
-/*	char fileSep = '/';
-	const char* resLocation = "inst/extdata/";
-
-	vector<Descriptor*>* ds = NULL;
-	vector<Descriptor*>::iterator ds_it;
-	GwaFile* gwa_file = NULL;
-	double used_memory = 0.0; */
-
-	/* gwasqc() functionality */
-/*	try {
-		Analyzer analyzer;
-
-		void (GwaFile::*check_functions[7])(Descriptor*) = {
-				&GwaFile::check_filters,
-				&GwaFile::check_thresholds,
-				&GwaFile::check_prefix,
-				&GwaFile::check_casesensitivity,
-				&GwaFile::check_missing_value,
-				&GwaFile::check_separators,
-				&GwaFile::check_filesize
-		};
-
-		vector<Plot*> plots;
-		vector<Plot*> combined_boxplots;
-
-		char* html_path = NULL;
-
-		ds = Descriptor::process_instructions(argv[1], fileSep);
-
-		for (ds_it = ds->begin(); ds_it != ds->end(); ds_it++) {
-			gwa_file = new GwaFile(*ds_it, check_functions, 7);
-
-			cout << gwa_file->get_descriptor()->get_full_path() << endl;
-			cout << gwa_file->get_estimated_size() << endl;
-
-			analyzer.open_gwafile(gwa_file);
-
-			analyzer.process_header();
-
-			analyzer.initialize_column_dependencies();
-			analyzer.initialize_filtered_columns();
-			analyzer.initialize_columns_ratios();
-
-			analyzer.process_data();
-
-			used_memory = analyzer.get_memory_usage();
-			cout << used_memory << " Mb" << endl;
-
-			analyzer.finalize_processing();
-
-			analyzer.create_plots(plots);
-			analyzer.create_combined_qqplots(plots);
-			analyzer.create_combined_boxplots(combined_boxplots);
-
-			analyzer.print_html_report(&html_path, plots, resLocation);
-			analyzer.print_txt_report();
-			analyzer.print_csv_report();
-
-			analyzer.close_gwafile();
-
-			delete gwa_file;
-			delete (*ds_it);
-		}
-
-		ds->clear();
-	} catch (Exception &e) {
-		cout << endl;
-		cout << e.what() << endl;
-	} */
-
-	/* gwasformat() functionality */
-/*	try {
-		Formatter formatter;
-
-		void (GwaFile::*check_functions[8])(Descriptor*) = {
-				&GwaFile::check_filters,
-				&GwaFile::check_thresholds,
-				&GwaFile::check_prefix,
-				&GwaFile::check_casesensitivity,
-				&GwaFile::check_missing_value,
-				&GwaFile::check_separators,
-				&GwaFile::check_order,
-				&GwaFile::check_genomiccontrol
-		};
-
-		double inflation_factor = numeric_limits<double>::quiet_NaN();
-		int n_total = 0;
-		int n_filtered = 0;
-
-		ds = Descriptor::process_instructions("QC_script_format.txt", fileSep);
-
-		for (ds_it = ds->begin(); ds_it != ds->end(); ds_it++) {
-			gwa_file = new GwaFile(*ds_it, check_functions, 8);
-
-			cout << gwa_file->get_descriptor()->get_full_path() << endl;
-
-			formatter.open_gwafile(gwa_file);
-			formatter.process_header();
-
-			if (gwa_file->is_gc_on()) {
-				inflation_factor = gwa_file->get_inflation_factor();
-				if (isnan(inflation_factor)) {
-					inflation_factor = formatter.calculate_lambda(n_total, n_filtered);
-				}
-			}
-
-			cout << "Inflation factor: " << inflation_factor << endl;
-
-			formatter.format(inflation_factor, '\t', n_total, n_filtered);
-
-			formatter.close_gwafile();
-
-			delete gwa_file;
-			delete (*ds_it);
-		}
-		ds->clear();
-	} catch (Exception &e) {
-		cout << endl;
-		cout << e.what() << endl;
-	}*/
 
 	return 0;
 }

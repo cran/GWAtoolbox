@@ -44,6 +44,7 @@ const char* Descriptor::AVPOSTPROB = "AVPOSTPROB";
 const char* Descriptor::MAF = "MAF";
 const char* Descriptor::IMP = "IMP";
 const char* Descriptor::SNP_HQ = "HQ_SNP";
+const char* Descriptor::LD = "LD";
 
 const char* Descriptor::ANALYZE = "ANALYZE";
 const char* Descriptor::BOXPLOTWIDTH = "BOXPLOTWIDTH";
@@ -74,6 +75,13 @@ const char* Descriptor::MAP_MARKER = "MAP_MARKER";
 const char* Descriptor::MAP_CHR = "MAP_CHR";
 const char* Descriptor::MAP_POSITION = "MAP_POSITION";
 
+const char* Descriptor::LD_FILE = "LD_FILE";
+const char* Descriptor::LD_FILE_SEPARATOR = "LD_FILE_SEPARATOR";
+const char* Descriptor::LD_MARKER = "LD_MARKER";
+const char* Descriptor::LD_MARKER1 = "LD_MARKER1";
+const char* Descriptor::LD_MARKER2 = "LD_MARKER2";
+const char* Descriptor::LD_VALUE = "LD_VALUE";
+
 const char* Descriptor::COMMA = "COMMA";
 const char* Descriptor::COMMAS = "COMMAS";
 const char* Descriptor::SEMICOLON = "SEMICOLON";
@@ -88,13 +96,13 @@ const char* Descriptor::HIGH_MODES[] = {"HIGH", "2"};
 
 Descriptor::Descriptor():
 	path_separator('\0'), name(NULL), path(NULL), full_path(NULL),
-	abbreviation(NULL), columns(bool_strcmp), properties(bool_strcmp), thresholds(bool_strcmp), renamed_columns(bool_strcmp) {
+	abbreviation(NULL), columns(bool_strcmp), properties(bool_strcmp), thresholds(bool_strcmp), renamed_columns(bool_strcmp), ld_files(bool_strcmp) {
 
 }
 
 Descriptor::Descriptor(const char* full_path, char path_separator) throw (DescriptorException):
 	path_separator(path_separator), name(NULL), path(NULL), full_path(NULL),
-	abbreviation(NULL),	columns(bool_strcmp), properties(bool_strcmp), thresholds(bool_strcmp), renamed_columns(bool_strcmp)  {
+	abbreviation(NULL),	columns(bool_strcmp), properties(bool_strcmp), thresholds(bool_strcmp), renamed_columns(bool_strcmp), ld_files(bool_strcmp)  {
 
 	if (full_path == NULL) {
 		throw DescriptorException("Descriptor", "Descriptor( const char*, char )", __LINE__, 0, "full_path");
@@ -114,7 +122,7 @@ Descriptor::Descriptor(const char* full_path, char path_separator) throw (Descri
 
 Descriptor::Descriptor(const char* full_path, Descriptor& file, char path_separator) throw (DescriptorException):
 	path_separator(path_separator), name(NULL), path(NULL), full_path(NULL),
-	abbreviation(NULL), columns(bool_strcmp), properties(bool_strcmp), thresholds(bool_strcmp), renamed_columns(bool_strcmp)  {
+	abbreviation(NULL), columns(bool_strcmp), properties(bool_strcmp), thresholds(bool_strcmp), renamed_columns(bool_strcmp), ld_files(bool_strcmp)  {
 
 	if (full_path == NULL) {
 		throw DescriptorException("Descriptor", "Descriptor( const char*, Descriptor&, char )", __LINE__, 0, "full_path");
@@ -131,6 +139,7 @@ Descriptor::Descriptor(const char* full_path, Descriptor& file, char path_separa
 		copy(thresholds, file.thresholds);
 		copy(renamed_columns, file.renamed_columns);
 		copy(reordered_columns, file.reordered_columns);
+		copy(ld_files, file.ld_files);
 	} catch (DescriptorException &e) {
 		e.add_message("Descriptor", "Descriptor( const char*, Descriptor&, char )", __LINE__, 3);
 		throw;
@@ -174,11 +183,17 @@ Descriptor::~Descriptor() {
 		free((char*)*vector_char_it);
 	}
 
+	for (map_char_it = ld_files.begin(); map_char_it != ld_files.end(); map_char_it++) {
+		free((char*)map_char_it->first);
+		free(map_char_it->second);
+	}
+
 	columns.clear();
 	properties.clear();
 	thresholds.clear();
 	renamed_columns.clear();
 	reordered_columns.clear();
+	ld_files.clear();
 }
 
 char* Descriptor::extract_name(const char* full_path, char path_separator) throw (DescriptorException) {
@@ -658,6 +673,31 @@ int Descriptor::get_reordered_columns_number() {
 	return reordered_columns.size();
 }
 
+vector<const char*>* Descriptor::get_ld_files() {
+	vector<const char*>* ld_files = new vector<const char*>();
+
+	map_char_it = this->ld_files.begin();
+	while (map_char_it != this->ld_files.end()) {
+		ld_files->push_back(map_char_it->first);
+		map_char_it++;
+	}
+
+	return ld_files;
+}
+
+const char* Descriptor::get_ld_file(const char* value) throw (DescriptorException) {
+	try {
+		return get(ld_files, value);
+	} catch (DescriptorException &e) {
+		e.add_message("Descriptor", "const char* get_ld_files( const char* )", __LINE__, 22);
+		throw;
+	}
+}
+
+int Descriptor::get_ld_files_number() {
+	return ld_files.size();
+}
+
 void Descriptor::set_abbreviation(const char* abbreviation) throw (DescriptorException) {
 	if (abbreviation == NULL) {
 		throw DescriptorException("Descriptor", "set_abbreviation( const char* )", __LINE__, 0, "abbreviation");
@@ -784,6 +824,15 @@ void Descriptor::add_reordered_column(const char* name) throw (DescriptorExcepti
 	}
 }
 
+void Descriptor::add_ld_file(const char* name, const char* path) throw (DescriptorException) {
+	try {
+		add(ld_files, name, path);
+	} catch (DescriptorException &e) {
+		e.add_message("Descriptor", "add_ld_file( const char*, const char* )", __LINE__, 20);
+		throw;
+	}
+}
+
 bool Descriptor::remove_column(const char* common_name) throw (DescriptorException) {
 	try {
 		return remove(columns, common_name);
@@ -826,6 +875,15 @@ void Descriptor::remove_reordered_columns() {
 	}
 
 	reordered_columns.clear();
+}
+
+bool Descriptor::remove_ld_file(const char* name) throw (DescriptorException) {
+	try {
+		return remove(ld_files, name);
+	} catch (DescriptorException &e) {
+		e.add_message("Descriptor", "bool remove_new_column_name( const char* )", __LINE__, 21);
+		throw;
+	}
 }
 
 vector<Descriptor*>* Descriptor::process_instructions(const char* script_name, char path_separator) throw (DescriptorException) {
@@ -1238,6 +1296,67 @@ vector<Descriptor*>* Descriptor::process_instructions(const char* script_name, c
 				} else if (strcmp(token, MAP_POSITION) == 0) {
 					if (!tokens.empty()) {
 						default_descriptor.add_property(MAP_POSITION, tokens.front());
+					}
+				} else if (strcmp(token, LD_FILE) == 0) {
+					if (tokens.size() >= 2) {
+						token = tokens.front();
+						tokens.pop_front();
+						default_descriptor.add_ld_file(token, tokens.front());
+					}
+				} else if (strcmp(token, LD_FILE_SEPARATOR) == 0) {
+					if (!tokens.empty()) {
+						if ((strcmp_ignore_case(tokens.front(), COMMA) == 0) ||
+								(strcmp_ignore_case(tokens.front(), COMMAS) == 0)) {
+							default_descriptor.add_property(LD_FILE_SEPARATOR, COMMA);
+						} else if (strcmp_ignore_case(tokens.front(), SEMICOLON) == 0) {
+							default_descriptor.add_property(LD_FILE_SEPARATOR, SEMICOLON);
+						} else if ((strcmp_ignore_case(tokens.front(), TAB) == 0) ||
+								(strcmp_ignore_case(tokens.front(), TABULATION) == 0)) {
+							default_descriptor.add_property(LD_FILE_SEPARATOR, TABULATION);
+						} else if (strcmp_ignore_case(tokens.front(), WHITESPACE) == 0) {
+							default_descriptor.add_property(LD_FILE_SEPARATOR, WHITESPACE);
+						} else {
+							throw DescriptorException("Descriptor", "vector<Descriptor*>* process_instructions( const char*, char )", __LINE__, 15, tokens.front(), LD_FILE_SEPARATOR);
+						}
+					}
+				} else if (strcmp(token, LD_MARKER) == 0) {
+					if (tokens.size() >= 2) {
+						if (default_descriptor.get_property(LD_MARKER1) == NULL) {
+							default_descriptor.add_property(LD_MARKER1, LD_MARKER1);
+						}
+
+						if (default_descriptor.get_property(LD_MARKER2) == NULL) {
+							default_descriptor.add_property(LD_MARKER2, LD_MARKER2);
+						}
+
+						if (default_descriptor.get_property(LD_VALUE) == NULL) {
+							default_descriptor.add_property(LD_VALUE, LD_VALUE);
+						}
+
+						default_descriptor.add_property(LD_MARKER1, tokens.front());
+						tokens.pop_front();
+						default_descriptor.add_property(LD_MARKER2, tokens.front());
+					}
+				} else if (strcmp(token, LD_VALUE) == 0) {
+					if (!tokens.empty()) {
+						if (default_descriptor.get_property(LD_MARKER1) == NULL) {
+							default_descriptor.add_property(LD_MARKER1, LD_MARKER1);
+						}
+
+						if (default_descriptor.get_property(LD_MARKER2) == NULL) {
+							default_descriptor.add_property(LD_MARKER2, LD_MARKER2);
+						}
+
+						if (default_descriptor.get_property(LD_VALUE) == NULL) {
+							default_descriptor.add_property(LD_VALUE, LD_VALUE);
+						}
+
+						default_descriptor.add_property(LD_VALUE, tokens.front());
+					}
+				} else if (strcmp(token, LD) == 0) {
+					if (!tokens.empty()) {
+						default_descriptor.remove_threshold(LD);
+						default_descriptor.add_threshold(LD, tokens.front());
 					}
 				}
 				tokens.clear();

@@ -42,6 +42,8 @@ private:
 	bool regions_append_on;
 	char map_file_header_separator;
 	char map_file_data_separator;
+	char ld_file_header_separator;
+	char ld_file_data_separator;
 
 public:
 	GwaFile(Descriptor* descriptor) throw (GwaFileException);
@@ -62,6 +64,8 @@ public:
 	bool is_regions_append_on();
 	char get_map_file_header_separartor();
 	char get_map_file_data_separator();
+	char get_ld_file_header_separator();
+	char get_ld_file_data_separator();
 
 	void check_filters(Descriptor* descriptor) throw (GwaFileException);
 	void check_thresholds(Descriptor* descriptor) throw (GwaFileException);
@@ -77,7 +81,10 @@ public:
 	void check_regions_file_separators(Descriptor* descriptor) throw (GwaFileException);
 	void check_regions_deviation(Descriptor* descriptor) throw (GwaFileException);
 	void check_regions_append(Descriptor* descriptor) throw (GwaFileException);
-	void check_map_file_separators(Descriptor* descroptor) throw (GwaFileException);
+	void check_map_file_separators(Descriptor* descriptor) throw (GwaFileException);
+	void check_ld_files(Descriptor* descriptor) throw (GwaFileException);
+	void check_ld_files_separators(Descriptor* descriptor) throw (GwaFileException);
+	void check_ld_threshold(Descriptor* descriptor) throw (GwaFileException);
 
 };
 

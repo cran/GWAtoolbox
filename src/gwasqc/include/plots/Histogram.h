@@ -21,12 +21,13 @@
 #define HISTOGRAM_H_
 
 #include <math.h>
-#include <R_ext/Applic.h>
+/*#include <R_ext/Applic.h>*/
 #include <iostream>
 
 #include "PlotException.h"
 
 #include "R.h"
+#include "Rmath.h"
 #include "Rinternals.h"
 
 extern "C" {
@@ -47,6 +48,8 @@ private:
 	char* title;
 
 	Histogram();
+
+	static double pretty(double *lo, double *up, int *ndiv, int min_n, double shrink_sml, double high_u_fact[], int eps_correction, int return_bounds);
 
 public:
 	virtual ~Histogram();

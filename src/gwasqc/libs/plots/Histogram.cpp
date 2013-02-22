@@ -105,7 +105,8 @@ Histogram* Histogram::create(const char* name, double* sorted_data, int data_siz
 	range[0] = *lower_finite;
 	range[1] = *upper_finite;
 
-	unit = R_pretty0(range, range + 1, &nclass, 1, 0.75, bias, 0, 1);
+	unit = pretty(range, range + 1, &nclass, 1, 0.75, bias, 0, 1);
+	/* unit = R_pretty0(range, range + 1, &nclass, 1, 0.75, bias, 0, 1); */
 	/* END: Determine finite data boundaries, ranges, breaks and etc. See R help(pretty). */
 
 	/* BEGIN: Initialize new histogram object */
@@ -218,4 +219,132 @@ void Histogram::set_title(const char* title) throw (PlotException) {
 
 const char* Histogram::get_title() {
 	return title;
+}
+
+/*
+ * The following function is from R 2.15.3 RC.
+ * The implementation was copied, since it is not documented in R API and may be changed/removed in new R versions.
+ * WARNING: must be checked for compatibility with every new R version.
+ */
+double Histogram::pretty(double *lo, double *up, int *ndiv, int min_n, double shrink_sml, double high_u_fact[], int eps_correction, int return_bounds) {
+/* From version 0.65 on, we had rounding_eps := 1e-5, before, r..eps = 0
+ * 1e-7 is consistent with seq.default() */
+	double rounding_eps = 0.0000001;
+
+	double h = high_u_fact[0];
+	double h5 = high_u_fact[1];
+
+    double dx = 0.0, cell = 0.0, unit = 0.0, base = 0.0, U = 0.0;
+    double ns = 0.0, nu = 0.0;
+    int k = 0;
+    bool i_small = false;
+
+    dx = *up - *lo;
+    /* cell := "scale"	here */
+    if((dx == 0) && (*up == 0)) { /*  up == lo == 0	 */
+    	cell = 1.0;
+    	i_small = true;
+    } else {
+    	cell = fmax2(fabs(*lo), fabs(*up));
+    	/* U = upper bound on cell/unit */
+    	U = (1.0 + (h5 >= 1.5 * h + 0.5)) ? 1.0 / (1.0 + h) : 1.5 / (1 + h5);
+    	/* added times 3, as several calculations here */
+    	if (dx < cell * U * imax2(1, *ndiv) * DBL_EPSILON * 3) {
+    		i_small = true;
+    	}
+    }
+
+    /*OLD: cell = FLT_EPSILON+ dx / *ndiv; FLT_EPSILON = 1.192e-07 */
+    if (i_small) {
+        if(cell > 10.0) {
+        	cell = 9.0 + cell / 10.0;
+        }
+        cell *= shrink_sml;
+        if(min_n > 1) {
+        	cell /= min_n;
+        }
+    } else {
+    	cell = dx;
+    	if(*ndiv > 1) {
+    		cell /= *ndiv;
+    	}
+    }
+
+    if (cell < 20.0 * DBL_MIN) {
+      cell = 20.0 * DBL_MIN;
+    } else if (cell * 10.0 > DBL_MAX) {
+      cell = 0.1 * DBL_MAX;
+    }
+
+    base = pow(10.0, floor(log10(cell))); /* base <= cell < 10*base */
+
+    /* unit : from { 1,2,5,10 } * base
+     *	 such that |u - cell| is small,
+     * favoring larger (if h > 1, else smaller)  u  values;
+     * favor '5' more than '2'  if h5 > h  (default h5 = .5 + 1.5 h) */
+    unit = base;
+    if ((U = 2.0 * base) - cell <  h * (cell - unit)) {
+    	unit = U;
+		if ((U = 5.0 * base) - cell < h5 * (cell - unit)) {
+			unit = U;
+			if ((U = 10.0 * base) - cell <  h * (cell - unit))
+				unit = U;
+		}
+    }
+    /* Result: c := cell,  u := unit,  b := base
+     *	c in [	1,	      (2+ h) /(1+h) ] b ==> u=  b
+     *	c in ( (2+ h)/(1+h),  (5+2h5)/(1+h5)] b ==> u= 2b
+     *	c in ( (5+2h)/(1+h), (10+5h) /(1+h) ] b ==> u= 5b
+     *	c in ((10+5h)/(1+h),	         10 ) b ==> u=10b
+     *
+     *	===>	2/5 *(2+h)/(1+h)  <=  c/u  <=  (2+h)/(1+h)	*/
+
+    ns = floor(*lo / unit + rounding_eps);
+    nu = ceil(*up / unit - rounding_eps);
+    if((eps_correction != 0) && (eps_correction > 1 || !i_small)) {
+        if (*lo) {
+        	*lo *= (1.0 - DBL_EPSILON);
+        } else {
+        	*lo = -DBL_MIN;
+        }
+        if (*up) {
+        	*up *= (1.0 + DBL_EPSILON);
+        } else {
+        	*up = +DBL_MIN;
+        }
+    }
+
+    while(ns * unit > *lo + rounding_eps * unit) ns--;
+
+    while(nu * unit < *up - rounding_eps * unit) nu++;
+
+    k = (int)(0.5 + nu - ns);
+    if(k < min_n) {
+	/* ensure that	nu - ns	 == min_n */
+    	k = min_n - k;
+    	if(ns >= 0.0) {
+    		nu += k / 2;
+    		ns -= k / 2 + k % 2;/* ==> nu-ns = old(nu-ns) + min_n -k = min_n */
+    	} else {
+    		ns -= k / 2;
+    		nu += k / 2 + k % 2;
+    	}
+    	*ndiv = min_n;
+    } else {
+    	*ndiv = k;
+    }
+
+    if(return_bounds) { /* if()'s to ensure that result covers original range */
+        if (ns * unit < *lo) {
+        	*lo = ns * unit;
+        }
+        if (nu * unit > *up) {
+        	*up = nu * unit;
+        }
+    } else {
+        *lo = ns;
+        *up = nu;
+    }
+
+    return unit;
 }

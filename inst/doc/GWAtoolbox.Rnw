@@ -9,6 +9,7 @@
 
 \title{GWAtoolbox \\An R package for the fast processing of data from Genome-Wide Association Studies}
 \author{Christian Fuchsberger \and Daniel Taliun \and Cristian Pattaro}
+\date{28-02-2013}
 
 % \VignetteIndexEntry{GWAtoolbox}
 
@@ -50,7 +51,7 @@ The function \emph{gwasqc()} is capable to process a high number of GWAS data fi
 
 \section{Installation}
 The \emph{GWAtoolbox} package can be downloaded from \url{http://www.eurac.edu/GWAtoolbox.html}.
-It requires R version 2.13.1 or higher. The installation procedure depends on the host operating system and user privileges. In the following, detailed installation instructions for a wide range of settings are provided.
+It requires R version 2.15.0 or higher. The installation procedure depends on the host operating system and user privileges. In the following, detailed installation instructions for a wide range of settings are provided.
 
 \subsection{Windows}
 
@@ -1335,7 +1336,7 @@ There is no need to define the \emph{MAP\_CHR} field for both map files.
 Also there is no need to redefine \emph{MAP\_MARKER} for the \emph{genes\_file\_2.csv} map file.	
 \end{example}
 
-\section{Specifying Window Size For Annotation}
+\subsubsection{Specifying Window Size For Annotation}
 Every marker in the GWAS data file is annotated with the regions (e.g. genes) that fall in a particular window around it.
 \emph{annotate()} allows to specify multiple window sizes using command \textbf{REGIONS\_DEVIATION}\index{REGIONS\_DEVIATION}.
 Command \textbf{REGIONS\_DEVIATION}\index{REGIONS\_DEVIATION} is followed by an arbitrary number of positive integers that specify window sizes around markers in base pairs.
@@ -1357,7 +1358,7 @@ Every marker in \emph{input\_file\_1.txt} will be annotated with regions that co
 While every marker in \emph{input\_file\_2.csv} will be annotated with regions that contains it or are within +/-100kb, +/-250kb and +/-500kb windows around it.
 \end{example}
 
-\section{Specifying Output Format}
+\subsubsection{Specifying Output Format}
 Often GWAS data file contains many columns that are not required in the output files with annotation results.
 By default, in addition to columns with annotated regions, \emph{annotate()} outputs only columns with marker name, chromosome name and position.
 This behaviour can be modified for every input file in the input script using the command \textbf{REGIONS\_APPEND}\index{REGIONS\_APPEND}.

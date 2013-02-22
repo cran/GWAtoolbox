@@ -50,6 +50,7 @@ public:
 	int read_line() throw (ReaderException);
 	void reset() throw (ReaderException);
 	bool eof();
+	bool sof();
 	bool is_open();
 	bool is_compressed();
 	int get_buffer_size();

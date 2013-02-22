@@ -22,25 +22,11 @@ function assign()
 			var nc=document.createElement('div');
 			this.parentNode.parentNode.insertBefore(nc, this.parentNode);
 			nc.style.display='none';
+			nc.style.zIndex = "1";
 			nc.id=picId;
 			var newpic=document.createElement('img');
 			newpic.src=this.href;
-			if (self.pageYOffset)
-			{
-				nc.style.top = self.pageYOffset + "px";
-			}
-			else if (document.documentElement && document.documentElement.scrollTop)
-			{
-				nc.style.top = document.documentElement.scrollTop + "px";
-			}
-			else if (document.body.scrollTop)
-			{
-				nc.style.top = document.body.scrollTop + "px";
-			}
-			else
-			{
-				nc.style.top = 0 + "px";
-			}
+			nc.style.top = 0 + "px";
 			newpic.alt=this.getElementsByTagName('img')[0].alt;
 			newpic.title='Click to close the figure';
 			newpic.onclick=function()
@@ -52,4 +38,26 @@ function assign()
 			return false;
 		}
 	}    
+}
+
+function minmax(element) {
+	if (element.innerHTML == "+") {
+		element.innerHTML = "-";
+		div = element.nextSibling;	
+		while (div != null) {
+			if (div.nodeType == 1) {
+				div.style.display = "block";
+			}
+			div = div.nextSibling;
+		}
+	} else if (element.innerHTML == "-") {
+		element.innerHTML = "+";	
+		div = element.nextSibling;	
+		while (div != null) {
+			if (div.nodeType == 1) {
+				div.style.display = "none";
+			}
+			div = div.nextSibling;
+		}
+	}		
 }

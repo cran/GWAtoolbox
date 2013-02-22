@@ -60,6 +60,33 @@ int auxiliary::strcmp_ignore_case(const char* first, const char* second) {
 	return 1;
 }
 
+int auxiliary::strcmp_ignore_case(const char* first, const char* second, int n) {
+	int i = 0;
+
+	while ((first[i] != '\0') && (second[i] != '\0') && (i < n)) {
+		if (tolower(first[i]) < tolower(second[i])) {
+			return -1;
+		}
+		else if (tolower(first[i]) > tolower(second[i])) {
+			return 1;
+		}
+		i++;
+	}
+
+	if (i >= n) {
+		return 0;
+	}
+
+	if (first[i] == '\0') {
+		if (second[i] == '\0') {
+			return 0;
+		}
+		return -1;
+	}
+
+	return 1;
+}
+
 char* auxiliary::transform_file_name(char** new_file_name, const char* prefix, const char* old_file_name, const char* extension, bool preserve_old_extension) {
 	int old_extension_start = -1;
 
