@@ -19,7 +19,7 @@
 
 #include "../../include/metas/MetaGroup.h"
 
-MetaGroup::MetaGroup(): Meta(), na_value(false), new_value(NULL), groups(bool_strcmp) {
+MetaGroup::MetaGroup(bool trim_output): Meta(), na_value(false), new_value(NULL), groups(bool_strcmp), trim_output(trim_output) {
 }
 
 MetaGroup::~MetaGroup() {
@@ -72,22 +72,49 @@ void MetaGroup::print(ostream& stream) {
 		int numeric_value = 0;
 		char* end_ptr = NULL;
 
-		unsigned int max_length = 0;
+		unsigned int max_length = 1u;
+		unsigned int other_non_numerics = 0u;
 
-		for (groups_it = groups.begin(); groups_it != groups.end(); groups_it++) {
-			if (max_length < strlen(groups_it->first)) {
-				max_length = strlen(groups_it->first);
+		if (trim_output) {
+			for (groups_it = groups.begin(); groups_it != groups.end(); groups_it++) {
+				numeric_value = strtol(groups_it->first, &end_ptr, 10);
+				if (*end_ptr == '\0') {
+					if (max_length < strlen(groups_it->first)) {
+						max_length = strlen(groups_it->first);
+					}
+
+					numeric_groups.insert(pair<int, int>(numeric_value, groups_it->second));
+				} else {
+					if (strlen(groups_it->first) > 1u) {
+						other_non_numerics += 1u;
+					} else {
+						non_numeric_groups.push_back(pair<const char*, int>(groups_it->first, groups_it->second));
+					}
+				}
 			}
 
-			numeric_value = strtol(groups_it->first, &end_ptr, 10);
-			if (*end_ptr == '\0') {
-				numeric_groups.insert(pair<int, int>(numeric_value, groups_it->second));
+			if (other_non_numerics > 1u) {
+				if (max_length < strlen("OTHERS (LENGTH > 1)")) {
+					max_length = strlen("OTHERS (LENGTH > 1)");
+				}
+				non_numeric_groups.push_back(pair<const char*, int>("OTHERS (LENGTH > 1)", other_non_numerics));
 			}
-			else {
-				non_numeric_groups.push_back(pair<const char*, int>(groups_it->first, groups_it->second));
+		} else {
+			for (groups_it = groups.begin(); groups_it != groups.end(); groups_it++) {
+				if (max_length < strlen(groups_it->first)) {
+					max_length = strlen(groups_it->first);
+				}
+
+				numeric_value = strtol(groups_it->first, &end_ptr, 10);
+				if (*end_ptr == '\0') {
+					numeric_groups.insert(pair<int, int>(numeric_value, groups_it->second));
+				} else {
+					non_numeric_groups.push_back(pair<const char*, int>(groups_it->first, groups_it->second));
+				}
 			}
 		}
-		max_length += 1;
+
+		max_length += 1u;
 
 		stream << resetiosflags(stream.flags());
 		stream << " |" << setfill('-') << setw(max_length) << "-" << "|" << setw(12) << "-" << "|" << endl;
@@ -114,14 +141,34 @@ void MetaGroup::print_html(ostream& stream, char path_separator) {
 		int numeric_value = 0;
 		char* end_ptr = NULL;
 
-		for (groups_it = groups.begin(); groups_it != groups.end(); groups_it++) {
-			numeric_value = strtol(groups_it->first, &end_ptr, 10);
+		unsigned int other_non_numerics = 0u;
 
-			if (*end_ptr == '\0') {
-				numeric_groups.insert(pair<int, int>(numeric_value, groups_it->second));
+		if (trim_output) {
+			for (groups_it = groups.begin(); groups_it != groups.end(); groups_it++) {
+				numeric_value = strtol(groups_it->first, &end_ptr, 10);
+				if (*end_ptr == '\0') {
+					numeric_groups.insert(pair<int, int>(numeric_value, groups_it->second));
+				} else {
+					if (strlen(groups_it->first) > 1u) {
+						other_non_numerics += 1u;
+					} else {
+						non_numeric_groups.push_back(pair<const char*, int>(groups_it->first, groups_it->second));
+					}
+				}
 			}
-			else {
-				non_numeric_groups.push_back(pair<const char*, int>(groups_it->first, groups_it->second));
+
+			if (other_non_numerics > 1u) {
+				non_numeric_groups.push_back(pair<const char*, int>("OTHERS (LENGTH > 1)", other_non_numerics));
+			}
+		} else {
+			for (groups_it = groups.begin(); groups_it != groups.end(); groups_it++) {
+				numeric_value = strtol(groups_it->first, &end_ptr, 10);
+				if (*end_ptr == '\0') {
+					numeric_groups.insert(pair<int, int>(numeric_value, groups_it->second));
+				}
+				else {
+					non_numeric_groups.push_back(pair<const char*, int>(groups_it->first, groups_it->second));
+				}
 			}
 		}
 

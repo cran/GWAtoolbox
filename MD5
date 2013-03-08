@@ -1,5 +1,5 @@
 d32239bcb673463ab874e80d47fae504 *COPYING
-32ea1d2936c9f42b0088bdf1c0fc24f3 *DESCRIPTION
+887f2cc31f406ef710f597f09eb3c11f *DESCRIPTION
 28a180a5b7163014e037fb12fa3e5868 *NAMESPACE
 d948ab42775e9560d421ed80a617466e *R/ANNOTATE.R
 443955d5e492b8846694342531fadd8c *R/DISPERSION_CHECK.R
@@ -16,8 +16,8 @@ b830e147a21778e5117f442f87e535d3 *R/PGWASQC.R
 f9cdc16bd6a0606ceea57528862d0d28 *inst/doc/ANNOTATE_script.txt
 3e44febf9c3186ed203560fbb71cca32 *inst/doc/GWASFORMAT_script.txt
 7251d2c84157e64b0afe06d30f0c11f1 *inst/doc/GWASQC_script.txt
-af5489cf38f55b95d86462f03be1018a *inst/doc/GWAtoolbox.Rnw
-31714ef7e16179252891834ea20ef91c *inst/doc/GWAtoolbox.pdf
+1e6f443df1d80281717f1e98339e5d9c *inst/doc/GWAtoolbox.Rnw
+61e41963cb0a5e77c69eb16bdc789313 *inst/doc/GWAtoolbox.pdf
 52035850c30d7b079b3758cd999a81e0 *inst/doc/PANNOTATE_script.txt
 07768f94f3909cae6807d6217b13da1a *inst/doc/PGWASFORMAT_script.txt
 749001aa7be3f3a38036e13571f1bc31 *inst/doc/PGWASQC_script.txt
@@ -35,7 +35,7 @@ aa72676dc757bfc2f2488323ae813352 *inst/doc/plots.png
 248d26cef1b3aa69b1478e9887c78922 *inst/doc/workflow.png
 25cd998e64aa0433384cd55ba55eca61 *inst/extdata/content_style.css
 f35da7de80c0a88fa2657a76c81da2de *inst/extdata/menu_style.css
-1808cf1cce6fed481c615fbf468b76c0 *inst/extdata/script.js
+1e440c7d006b21343ce00036ed3f5219 *inst/extdata/script.js
 0504e75c1f5873224eea404450d017b7 *man/annotate.Rd
 347b544d30dc746c349b9ff63fcc347a *man/dispersion_check.Rd
 848e4083481cbf2a1e8a64a94f8aea0e *man/gwasformat.Rd
@@ -47,7 +47,7 @@ ee254e2b0e41ce93a7bfc49755fb371b *man/gwasqc.Rd
 6ec59e4cd44f6fea6de69360d5953465 *man/pgwasformat.Rd
 9507f9bd538e93508e8ab21c47911400 *man/pgwasqc.Rd
 0bead80eab3cef8eef2d678c853bbb63 *src/GWAtoolbox.cpp
-0a385f42bc8b6b47afbd49b802f21bf1 *src/GWAtoolbox.h
+5d4f1277e974b81155eb4bce2873771c *src/GWAtoolbox.h
 b6b9cf0c30c715d7236c84129b6db870 *src/Makevars
 ed8a6017082ea40a2c92d4c2abf17cd3 *src/Makevars.win
 dfab899435016835186a357109f36015 *src/annotation/Annotator.cpp
@@ -106,7 +106,7 @@ ea87581ccdec9c1fa9c62d7e5aaba286 *src/gwasqc/include/expressions/Get.h
 e9a90c9b24774212bbfd776496a4c390 *src/gwasqc/include/metas/MetaException.h
 f1cfcfe219b93058ba6765b6ea381cb2 *src/gwasqc/include/metas/MetaFiltered.h
 4fbc72e742d2583887d1c14a408e9ec8 *src/gwasqc/include/metas/MetaFormat.h
-2d8332cbecda23bb4f76311ddc61c54a *src/gwasqc/include/metas/MetaGroup.h
+cbfaff2936919e7003f60555e2d94e77 *src/gwasqc/include/metas/MetaGroup.h
 1d8052c575712fa19a8d027c27f269f5 *src/gwasqc/include/metas/MetaImplausible.h
 b31a44af804d9ae0bbe41eb312e9facc *src/gwasqc/include/metas/MetaImplausibleStrict.h
 3a216c2bb0244d96e869189482557d2e *src/gwasqc/include/metas/MetaImplausibleStrictAdjusted.h
@@ -119,7 +119,7 @@ fd4ed86b67246ca61dfecc5d7099e759 *src/gwasqc/include/plots/Histogram.h
 80cfe8f42fd67d15fe7dee76ddc6f037 *src/gwasqc/include/plots/PlotException.h
 e3d77d072f3350f874c50f203d9d2330 *src/gwasqc/include/plots/Plottable.h
 da96b163c16c6cc7b890f13e9332f3de *src/gwasqc/include/plots/Qqplot.h
-304f40349172fdf51a9d6958245c7848 *src/gwasqc/libs/analyzer/Analyzer.cpp
+3698937d7f6115269e0b128bab15cbfb *src/gwasqc/libs/analyzer/Analyzer.cpp
 32520863de5e03bf4794159df3ab4a40 *src/gwasqc/libs/analyzer/AnalyzerException.cpp
 ab95734467c9a210e8f0d6ad1fbf651f *src/gwasqc/libs/analyzer/Makefile
 e992f36c65951ce31dfb51522ab14787 *src/gwasqc/libs/expressions/Conjunction.cpp
@@ -136,7 +136,7 @@ ec3d20f8a3c3fc290ca705081ceab732 *src/gwasqc/libs/metas/Makefile
 98fa641a7e3e216bce54b8ccc65c4351 *src/gwasqc/libs/metas/MetaException.cpp
 bcd2f0ecdfaa779a75090d99aacc5aa1 *src/gwasqc/libs/metas/MetaFiltered.cpp
 eca95758eb52cf5e8f56e183a4894450 *src/gwasqc/libs/metas/MetaFormat.cpp
-bd391daaebf6ee19800964bb627969d3 *src/gwasqc/libs/metas/MetaGroup.cpp
+60910e6158a0e1695bad5c9ba290f3dd *src/gwasqc/libs/metas/MetaGroup.cpp
 f348469e51e338e873a217edb0c0ef1e *src/gwasqc/libs/metas/MetaImplausible.cpp
 5ab6c5dfe67b86f89ada5009b73500bd *src/gwasqc/libs/metas/MetaImplausibleStrict.cpp
 201c056a62dc94af04870573b84c0e8a *src/gwasqc/libs/metas/MetaImplausibleStrictAdjusted.cpp
@@ -149,7 +149,7 @@ eaf15a2ee06eedaadc47d062f559d910 *src/gwasqc/libs/plots/Histogram.cpp
 91355f424c1db6de0960fe7a5fa70e8e *src/gwasqc/libs/plots/Plot.cpp
 15d8f0d86957a6e332b0b33261d99896 *src/gwasqc/libs/plots/PlotException.cpp
 1260630f10b0deebbccb6d747ce95bb4 *src/gwasqc/libs/plots/Qqplot.cpp
-ad1e46640261f2060d90360732ecd7f9 *src/harmonization/Harmonizer.cpp
+eb03989325910a8cacd5c103b68545a8 *src/harmonization/Harmonizer.cpp
 5f6eae68940e16cc036eec11edf47554 *src/harmonization/HarmonizerException.cpp
 ac6bfaee0685e5ad2b236888f72f0a05 *src/harmonization/Makefile
 3385152a7b722e0c3f5f9c0e1806dafa *src/harmonization/include/Harmonizer.h

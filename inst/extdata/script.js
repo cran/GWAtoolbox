@@ -26,7 +26,6 @@ function assign()
 			nc.id=picId;
 			var newpic=document.createElement('img');
 			newpic.src=this.href;
-			nc.style.top = 0 + "px";
 			newpic.alt=this.getElementsByTagName('img')[0].alt;
 			newpic.title='Click to close the figure';
 			newpic.onclick=function()

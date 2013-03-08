@@ -37,8 +37,10 @@ private:
 	map<char*, int, bool(*)(const char*, const char*)> groups;
 	map<char*, int, bool(*)(const char*, const char*)>::iterator groups_it;
 
+	bool trim_output;
+
 public:
-	MetaGroup();
+	MetaGroup(bool trim_output = false);
 	virtual ~MetaGroup();
 	void put(char* value) throw (MetaException);
 	void finalize() throw (MetaException);

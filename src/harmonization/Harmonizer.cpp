@@ -944,10 +944,10 @@ void Harmonizer::harmonize_with_alleles(const char* output_file_name, bool drop,
 			/* BEGIN: parse and map SNP identifier. */
 			if (auxiliary::strcmp_ignore_case(tokens[id_column_pos], "rs", 2) == 0) {
 				/* BEGIN: check alleles. */
-				if ((auxiliary::strcmp_ignore_case(ref_allele, "A") != 0) && (auxiliary::strcmp_ignore_case(ref_allele, "C") != 0) &&
-						(auxiliary::strcmp_ignore_case(ref_allele, "G") != 0) && (auxiliary::strcmp_ignore_case(ref_allele, "T") != 0) &&
-						(auxiliary::strcmp_ignore_case(nonref_allele, "A") != 0) && (auxiliary::strcmp_ignore_case(nonref_allele, "C") != 0) &&
-								(auxiliary::strcmp_ignore_case(nonref_allele, "G") != 0) && (auxiliary::strcmp_ignore_case(nonref_allele, "T") != 0)) {
+				if (((auxiliary::strcmp_ignore_case(ref_allele, "A") != 0) && (auxiliary::strcmp_ignore_case(ref_allele, "C") != 0) &&
+						(auxiliary::strcmp_ignore_case(ref_allele, "G") != 0) && (auxiliary::strcmp_ignore_case(ref_allele, "T") != 0)) ||
+						((auxiliary::strcmp_ignore_case(nonref_allele, "A") != 0) && (auxiliary::strcmp_ignore_case(nonref_allele, "C") != 0) &&
+								(auxiliary::strcmp_ignore_case(nonref_allele, "G") != 0) && (auxiliary::strcmp_ignore_case(nonref_allele, "T") != 0))) {
 					log_writer->write("Line %u (WARNING): %s has incorrect alleles (only A/C/G/T are allowed).\n", line_number, tokens[id_column_pos]);
 				}
 				/* END: check alleles. */
@@ -1011,10 +1011,10 @@ void Harmonizer::harmonize_with_alleles(const char* output_file_name, bool drop,
 					if (auxiliary::strcmp_ignore_case(buffer_tokens[2u], VCF_SNP_TYPE) == 0) {
 						query_map.type = 'S';
 
-						if ((auxiliary::strcmp_ignore_case(ref_allele, "A") != 0) && (auxiliary::strcmp_ignore_case(ref_allele, "C") != 0) &&
-								(auxiliary::strcmp_ignore_case(ref_allele, "G") != 0) && (auxiliary::strcmp_ignore_case(ref_allele, "T") != 0) &&
-								(auxiliary::strcmp_ignore_case(nonref_allele, "A") != 0) && (auxiliary::strcmp_ignore_case(nonref_allele, "C") != 0) &&
-										(auxiliary::strcmp_ignore_case(nonref_allele, "G") != 0) && (auxiliary::strcmp_ignore_case(nonref_allele, "T") != 0)) {
+						if (((auxiliary::strcmp_ignore_case(ref_allele, "A") != 0) && (auxiliary::strcmp_ignore_case(ref_allele, "C") != 0) &&
+								(auxiliary::strcmp_ignore_case(ref_allele, "G") != 0) && (auxiliary::strcmp_ignore_case(ref_allele, "T") != 0)) ||
+								((auxiliary::strcmp_ignore_case(nonref_allele, "A") != 0) && (auxiliary::strcmp_ignore_case(nonref_allele, "C") != 0) &&
+										(auxiliary::strcmp_ignore_case(nonref_allele, "G") != 0) && (auxiliary::strcmp_ignore_case(nonref_allele, "T") != 0))) {
 							log_writer->write("Line %u (WARNING): %s has incorrect alleles (only A/C/G/T are allowed).\n", line_number, tokens[id_column_pos]);
 						}
 					} else {

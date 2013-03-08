@@ -9,7 +9,7 @@
 
 \title{GWAtoolbox \\An R package for the fast processing of data from Genome-Wide Association Studies}
 \author{Christian Fuchsberger \and Daniel Taliun \and Cristian Pattaro}
-\date{28-02-2013}
+\date{08-03-2013}
 
 % \VignetteIndexEntry{GWAtoolbox}
 

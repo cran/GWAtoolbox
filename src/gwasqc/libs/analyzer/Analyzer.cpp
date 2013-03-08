@@ -268,9 +268,9 @@ void Analyzer::process_header() throw (AnalyzerException) {
 				if (strcmp(column_name, Descriptor::MARKER) == 0) {
 					meta = new MetaUniqueness(heap_size);
 				} else if (strcmp(column_name, Descriptor::ALLELE1) == 0) {
-					meta = new MetaGroup();
+					meta = new MetaGroup(true);
 				} else if (strcmp(column_name, Descriptor::ALLELE2) == 0) {
-					meta = new MetaGroup();
+					meta = new MetaGroup(true);
 				} else if (strcmp(column_name, Descriptor::CHR) == 0) {
 					meta = new MetaGroup();
 				} else if (strcmp(column_name, Descriptor::POSITION) == 0) {
@@ -982,9 +982,9 @@ void Analyzer::print_txt_report() throw (AnalyzerException) {
 	try {
 		time_t system_time = time(NULL);
 
-		const char* version = VERSION;
-		const char* scanned = "File scanned:\t";
-		const char* date = "Date        :\t";
+		const char* version = "Version     : ";
+		const char* scanned = "File scanned: ";
+		const char* date = "Date        : ";
 		char* current_time = strtok(asctime(localtime(&system_time)), "\n");
 
 		unsigned int section = 0, subsection = 0;
@@ -998,9 +998,9 @@ void Analyzer::print_txt_report() throw (AnalyzerException) {
 
 		o_textfile_stream << "# " << setfill('-') << setw(76) << " #" << endl;
 		o_textfile_stream << "# " << setfill(' ') << setw(76) << " #" << endl;
-		o_textfile_stream << "# " << version << setfill(' ') << setw(76 - strlen(version)) << " #" << endl;
+		o_textfile_stream << "# " << version << VERSION << setfill(' ') << setw(76 - strlen(version) - strlen(VERSION)) << " #" << endl;
 		o_textfile_stream << "# " << setfill(' ') << setw(76) << " #" << endl;
-		o_textfile_stream << "# " << scanned << gwafile->get_descriptor()->get_name() << setfill(' ') << setw(76 - strlen(version) - strlen(gwafile->get_descriptor()->get_name())) << " #" << endl;
+		o_textfile_stream << "# " << scanned << gwafile->get_descriptor()->get_name() << setfill(' ') << setw(76 - strlen(scanned) - strlen(gwafile->get_descriptor()->get_name())) << " #" << endl;
 		o_textfile_stream << "# " << date << current_time << setfill(' ') << setw(76 - strlen(date) - strlen(current_time)) << " #" << endl;
 		o_textfile_stream << "# " << setfill(' ') << setw(76) << " #" << endl;
 		o_textfile_stream << "# " << setfill('-') << setw(76) << " #" << endl;
