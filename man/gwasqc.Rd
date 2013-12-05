@@ -302,7 +302,7 @@
 	newWd <- paste(system.file(package="GWAtoolbox"), "doc", sep="/")
 	setwd(newWd)
 	}
-
+	\dontrun{
 	# name of an input script
 	script <- "GWASQC_script.txt"
 
@@ -321,7 +321,7 @@
 	# restore previous workspace
 	setwd(currentWd)
 	}
-	
+	}
     \dontshow{
 	# all input and output files are located in the subdirectory "doc" of the installed GWAtoolbox package
 	message <- c("\n", rep("#", 40), "\n")

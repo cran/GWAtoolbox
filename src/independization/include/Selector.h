@@ -1,5 +1,5 @@
 /*
- * Copyright © 2012 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2012 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -27,6 +27,8 @@
 #include "SelectorException.h"
 #include "../../gwafile/include/GwaFile.h"
 #include "../../writer/include/WriterFactory.h"
+
+#include <R.h>
 
 using namespace std;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -32,11 +32,11 @@ EffectiveSampleSizeColumn::~EffectiveSampleSizeColumn() {
 
 void EffectiveSampleSizeColumn::out(ofstream& output_stream) throw (ofstream::failure) {
 	n_total = R_strtod(n_total_column->char_value, &end_ptr);
-	if ((*end_ptr != '\0') || (isnan(n_total))) {
+	if ((*end_ptr != '\0') || (ISNAN(n_total))) {
 		output_stream << "NA";
 	} else {
 		oevar_imp = R_strtod(oevar_imp_column->char_value, &end_ptr);
-		if ((*end_ptr != '\0') || (isnan(oevar_imp))) {
+		if ((*end_ptr != '\0') || (ISNAN(oevar_imp))) {
 			output_stream << "NA";
 		} else {
 			n_total = n_total * oevar_imp;

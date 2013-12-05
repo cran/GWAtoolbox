@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -30,7 +30,7 @@ CorrectedPvalueColumn::~CorrectedPvalueColumn() {
 
 void CorrectedPvalueColumn::out(ofstream& output_stream) throw (ofstream::failure) {
 	numeric_value = R_strtod(pvalue_column->char_value, &end_ptr);
-	if ((*end_ptr != '\0') || (isnan(numeric_value))) {
+	if ((*end_ptr != '\0') || (ISNAN(numeric_value))) {
 		output_stream << "NA";
 	} else {
 		if (lambda > 1.0) {

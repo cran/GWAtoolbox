@@ -1,6 +1,6 @@
 Package: GWAtoolbox
-Version: 2.2.3
-Date: 2013-03-08
+Version: 2.2.4
+Date: 2013-12-05
 Title: GWAS Quality Control
 Author: Daniel Taliun <Daniel.Taliun@eurac.edu>, Christian Fuchsberger
         <cfuchsb@umich.edu>, Cristian Pattaro
@@ -10,12 +10,9 @@ Description: Controls for duplicated IDs, distribution of betas, SEs,
         etc.
 Depends: R (>= 2.15.0)
 Suggests: parallel
-SystemRequirements: GNU GSL
+SystemRequirements: GNU make
 License: GPL (>= 3)
-Repository: CRAN
-Repository/R-Forge/Project: gwatoolbox
-Repository/R-Forge/Revision: 95
-Repository/R-Forge/DateTimeStamp: 2013-03-14 16:31:41
-Date/Publication: 2013-03-15 07:21:37
-Packaged: 2013-03-14 19:16:54 UTC; rforge
+Packaged: 2013-12-05 09:00:09 UTC; ripley
 NeedsCompilation: yes
+Repository: CRAN
+Date/Publication: 2013-12-05 10:00:50

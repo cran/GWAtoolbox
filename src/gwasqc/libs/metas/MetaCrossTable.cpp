@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -48,7 +48,7 @@ void MetaCrossTable::put(char* value) throw (MetaException) {
 	new_x_value = x_meta->get_value();
 	new_y_value = y_meta->get_value();
 
-	if (isnan(new_x_value) || isnan(new_y_value)) {
+	if (ISNAN(new_x_value) || ISNAN(new_y_value)) {
 		return;
 	}
 

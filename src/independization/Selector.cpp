@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -284,7 +284,7 @@ void Selector::process_data() throw (SelectorException) {
 				throw SelectorException("Selector", "process_data()",  __LINE__, 10, pvalue_token, ((column_name = descriptor->get_column(Descriptor::PVALUE)) != NULL) ? column_name : Descriptor::PVALUE, line_number);
 			}
 
-			if (isnan(pvalue)) {
+			if (ISNAN(pvalue)) {
 				++line_number;
 				continue;
 			}
@@ -550,7 +550,7 @@ void Selector::process_ld_data() throw (SelectorException) {
 				throw SelectorException("Selector", "process_ld_data()",  __LINE__, 10, ld_value_token, ((column_name = descriptor->get_column(Descriptor::LD_VALUE)) != NULL) ? column_name : Descriptor::LD_VALUE, line_number);
 			}
 
-			if (isnan(ld_value)) {
+			if (ISNAN(ld_value)) {
 				++line_number;
 				continue;
 			}

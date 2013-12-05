@@ -2,7 +2,9 @@
 \alias{harmonize_id}
 \title{The harmonization of SNP identifiers.}
 \description{Function harmonizes SNP identifiers in the input file according to the provided mapping table.}
-\usage{harmonize_id(input, output, map, id = "markername", alleles = c("ref_allele", "non_ref_allele"), sep = "\t", drop = FALSE, gzip = TRUE)}
+\usage{harmonize_id(input, output, map, id = "markername", 
+		alleles = c("ref_allele", "non_ref_allele"), 
+		sep = "\t", drop = FALSE, gzip = TRUE)}
 \arguments{
 	\item{input}{
 		Name of an input file.

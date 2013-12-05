@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -41,6 +41,8 @@
 #include "../expressions/Let.h"
 #include "../expressions/Lt.h"
 #include "AnalyzerException.h"
+
+#include <R.h>
 
 class Analyzer {
 private:

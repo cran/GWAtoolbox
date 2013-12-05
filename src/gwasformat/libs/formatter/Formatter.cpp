@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -283,7 +283,7 @@ double Formatter::calculate_lambda(int& n_total, int& n_filtered) throw (Formatt
 					}
 
 					d_value = R_strtod(maf_token, &end_ptr);
-					if ((*end_ptr != '\0') || (isnan(d_value))) {
+					if ((*end_ptr != '\0') || (ISNAN(d_value))) {
 						line_number += 1;
 						continue;
 					}
@@ -292,14 +292,14 @@ double Formatter::calculate_lambda(int& n_total, int& n_filtered) throw (Formatt
 
 					if (auxiliary::fcmp(d_value, maf_filter_value, EPSILON) == 1) {
 						d_value = R_strtod(oevar_imp_token, &end_ptr);
-						if ((*end_ptr != '\0') || (isnan(d_value))) {
+						if ((*end_ptr != '\0') || (ISNAN(d_value))) {
 							line_number += 1;
 							continue;
 						}
 
 						if (auxiliary::fcmp(d_value, oevar_imp_filter_value, EPSILON) == 1) {
 							d_value = R_strtod(pvalue_token, &end_ptr);
-							if ((*end_ptr != '\0') || (isnan(d_value))) {
+							if ((*end_ptr != '\0') || (ISNAN(d_value))) {
 								line_number += 1;
 								continue;
 							}
@@ -352,7 +352,7 @@ double Formatter::calculate_lambda(int& n_total, int& n_filtered) throw (Formatt
 					}
 
 					d_value = R_strtod(maf_token, &end_ptr);
-					if ((*end_ptr != '\0') || (isnan(d_value))) {
+					if ((*end_ptr != '\0') || (ISNAN(d_value))) {
 						line_number += 1;
 						continue;
 					}
@@ -361,7 +361,7 @@ double Formatter::calculate_lambda(int& n_total, int& n_filtered) throw (Formatt
 
 					if (auxiliary::fcmp(d_value, maf_filter_value, EPSILON) == 1) {
 						d_value = R_strtod(pvalue_token, &end_ptr);
-						if ((*end_ptr != '\0') || (isnan(d_value))) {
+						if ((*end_ptr != '\0') || (ISNAN(d_value))) {
 							line_number += 1;
 							continue;
 						}
@@ -414,14 +414,14 @@ double Formatter::calculate_lambda(int& n_total, int& n_filtered) throw (Formatt
 				}
 
 				d_value = R_strtod(oevar_imp_token, &end_ptr);
-				if ((*end_ptr != '\0') || (isnan(d_value))) {
+				if ((*end_ptr != '\0') || (ISNAN(d_value))) {
 					line_number += 1;
 					continue;
 				}
 
 				if (auxiliary::fcmp(d_value, oevar_imp_filter_value, EPSILON) == 1) {
 					d_value = R_strtod(pvalue_token, &end_ptr);
-					if ((*end_ptr != '\0') || (isnan(d_value))) {
+					if ((*end_ptr != '\0') || (ISNAN(d_value))) {
 						line_number += 1;
 						continue;
 					}
@@ -467,7 +467,7 @@ double Formatter::calculate_lambda(int& n_total, int& n_filtered) throw (Formatt
 				}
 
 				d_value = R_strtod(pvalue_token, &end_ptr);
-				if ((*end_ptr != '\0') || (isnan(d_value))) {
+				if ((*end_ptr != '\0') || (ISNAN(d_value))) {
 					line_number += 1;
 					continue;
 				}
@@ -586,7 +586,7 @@ void Formatter::format(double lambda, char new_separator, int& n_total, int& n_f
 			output_columns.push_back(*columns_it);
 		}
 
-		if (!isnan(lambda)) {
+		if (!ISNAN(lambda)) {
 			if (stderr_column != NULL) {
 				column = new CorrectedStandardErrorColumn(stderr_column, lambda);
 				column->set_header("%s_gc", stderr_column->get_header());

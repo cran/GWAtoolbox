@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -20,6 +20,6 @@
 #ifndef GWATOOLBOX_H_
 #define GWATOOLBOX_H_
 
-#define VERSION	"GWAtoolbox(c) v2.2.3"
+#define VERSION	"GWAtoolbox(c) v2.2.4"
 
 #endif

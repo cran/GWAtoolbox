@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -77,7 +77,7 @@ char* Column::get_value() {
 
 double Column::get_numeric_value() {
 	numeric_value = R_strtod(char_value, &end_ptr);
-	if ((*end_ptr != '\0') || (isnan(numeric_value))) {
+	if ((*end_ptr != '\0') || (ISNAN(numeric_value))) {
 		return numeric_limits<double>::quiet_NaN();
 	}
 	return numeric_value;

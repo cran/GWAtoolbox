@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -79,7 +79,7 @@ Histogram* Histogram::create(const char* name, double* sorted_data, int data_siz
 	}
 
 	/* BEGIN: Determine finite data boundaries, ranges, breaks and etc. See R help(pretty). */
-	while ((i < data_size) && (isinf(sorted_data[i]))) {
+	while ((i < data_size) && (!R_FINITE(sorted_data[i]))) {
 		i += 1;
 	}
 
@@ -91,7 +91,7 @@ Histogram* Histogram::create(const char* name, double* sorted_data, int data_siz
 	n_finite = data_size - i;
 
 	i = data_size - 1;
-	while ((i >= 0) && (isinf(sorted_data[i]))) {
+	while ((i >= 0) && (!R_FINITE(sorted_data[i]))) {
 		i -= 1;
 	}
 

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -1505,7 +1505,7 @@ void Analyzer::print_csv_report() throw (AnalyzerException) {
 			while (filtered_metas_it != filtered_metas.end()) {
 				if (strcmp((*filtered_metas_it)->get_actual_name(), csv_columns[i]) == 0) {
 					if ((*filtered_metas_it)->is_numeric()) {
-						if (!isnan((*filtered_metas_it)->get_mean())) {
+						if (!ISNAN((*filtered_metas_it)->get_mean())) {
 							o_csvfile_stream << separator << (*filtered_metas_it)->get_mean();
 						} else {
 							o_csvfile_stream << separator << "nan";
@@ -1538,7 +1538,7 @@ void Analyzer::print_csv_report() throw (AnalyzerException) {
 			while (filtered_metas_it != filtered_metas.end()) {
 				if (strcmp((*filtered_metas_it)->get_actual_name(), csv_columns[i]) == 0) {
 					if ((*filtered_metas_it)->is_numeric()) {
-						if (!isnan((*filtered_metas_it)->get_sd())) {
+						if (!ISNAN((*filtered_metas_it)->get_sd())) {
 							o_csvfile_stream << separator << (*filtered_metas_it)->get_sd();
 						} else {
 							o_csvfile_stream << separator << "nan";
@@ -1571,7 +1571,7 @@ void Analyzer::print_csv_report() throw (AnalyzerException) {
 			while (filtered_metas_it != filtered_metas.end()) {
 				if (strcmp((*filtered_metas_it)->get_actual_name(), csv_columns[i]) == 0) {
 					if ((*filtered_metas_it)->is_numeric()) {
-						if (!isnan((*filtered_metas_it)->get_min())) {
+						if (!ISNAN((*filtered_metas_it)->get_min())) {
 							o_csvfile_stream << separator << (*filtered_metas_it)->get_min();
 						} else {
 							o_csvfile_stream << separator << "nan";
@@ -1605,7 +1605,7 @@ void Analyzer::print_csv_report() throw (AnalyzerException) {
 			while (filtered_metas_it != filtered_metas.end()) {
 				if (strcmp((*filtered_metas_it)->get_actual_name(), csv_columns[i]) == 0) {
 					if ((*filtered_metas_it)->is_numeric()) {
-						if (!isnan((*filtered_metas_it)->get_max())) {
+						if (!ISNAN((*filtered_metas_it)->get_max())) {
 							o_csvfile_stream << separator << (*filtered_metas_it)->get_max();
 						} else {
 							o_csvfile_stream << separator << "nan";
@@ -1638,7 +1638,7 @@ void Analyzer::print_csv_report() throw (AnalyzerException) {
 			while (filtered_metas_it != filtered_metas.end()) {
 				if (strcmp((*filtered_metas_it)->get_actual_name(), csv_columns[i]) == 0) {
 					if ((*filtered_metas_it)->is_numeric()) {
-						if (!isnan((*filtered_metas_it)->get_median())) {
+						if (!ISNAN((*filtered_metas_it)->get_median())) {
 							o_csvfile_stream << separator << (*filtered_metas_it)->get_median();
 						} else {
 							o_csvfile_stream << separator << "nan";
@@ -1671,7 +1671,7 @@ void Analyzer::print_csv_report() throw (AnalyzerException) {
 			while (filtered_metas_it != filtered_metas.end()) {
 				if (strcmp((*filtered_metas_it)->get_actual_name(), csv_columns[i]) == 0) {
 					if ((*filtered_metas_it)->is_numeric()) {
-						if (!isnan((*filtered_metas_it)->get_skew())) {
+						if (!ISNAN((*filtered_metas_it)->get_skew())) {
 							o_csvfile_stream << separator << (*filtered_metas_it)->get_skew();
 						} else {
 							o_csvfile_stream << separator << "nan";
@@ -1695,7 +1695,7 @@ void Analyzer::print_csv_report() throw (AnalyzerException) {
 				( (*ratio_metas_it)->get_source_a()->is_numeric() ) &&
 				( (*ratio_metas_it)->get_source_b()->is_numeric() ) ) {
 			for (unsigned int j = 0; j < MetaRatio::SLICES_CNT; j++) {
-				if (!isnan((*ratio_metas_it)->get_skewness()[j]) ) {
+				if (!ISNAN((*ratio_metas_it)->get_skewness()[j]) ) {
 					o_csvfile_stream << separator << (*ratio_metas_it)->get_skewness()[j];
 				} else {
 					o_csvfile_stream << separator << "nan";
@@ -1718,7 +1718,7 @@ void Analyzer::print_csv_report() throw (AnalyzerException) {
 			while (filtered_metas_it != filtered_metas.end()) {
 				if (strcmp((*filtered_metas_it)->get_actual_name(), csv_columns[i]) == 0) {
 					if ((*filtered_metas_it)->is_numeric()) {
-						if (!isnan((*filtered_metas_it)->get_kurtosis())) {
+						if (!ISNAN((*filtered_metas_it)->get_kurtosis())) {
 							o_csvfile_stream << separator << (*filtered_metas_it)->get_kurtosis();
 						} else {
 							o_csvfile_stream << separator << "nan";
@@ -1742,7 +1742,7 @@ void Analyzer::print_csv_report() throw (AnalyzerException) {
 				((*ratio_metas_it)->get_source_a()->is_numeric()) &&
 				((*ratio_metas_it)->get_source_b()->is_numeric())) {
 			for (unsigned int j = 0; j < MetaRatio::SLICES_CNT; j++) {
-				if (!isnan((*ratio_metas_it)->get_kurtosis()[j])) {
+				if (!ISNAN((*ratio_metas_it)->get_kurtosis()[j])) {
 					o_csvfile_stream << separator << (*ratio_metas_it)->get_kurtosis()[j];
 				} else {
 					o_csvfile_stream << separator << "nan";

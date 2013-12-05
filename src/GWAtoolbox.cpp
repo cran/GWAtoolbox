@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -31,6 +31,8 @@
 #include "annotation/include/Annotator.h"
 #include "harmonization/include/Harmonizer.h"
 #include "independization/include/Selector.h"
+
+#include <R.h>
 
 /* Define LINUX flag for compilation under Linux */
 #ifndef WIN32
@@ -1216,7 +1218,7 @@ SEXP perform_formatting(SEXP external_descriptor_pointer) {
 
 		if (gwa_file->is_gc_on()) {
 			inflation_factor = gwa_file->get_inflation_factor();
-			if (isnan(inflation_factor)) {
+			if (ISNAN(inflation_factor)) {
 				start_time = clock();
 				inflation_factor = formatter.calculate_lambda(n_total, n_filtered);
 				execution_time = (clock() - start_time)/(double)CLOCKS_PER_SEC;

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -78,7 +78,7 @@ Boxplot* Boxplot::create(const char* name, double* sorted_data, int data_size, d
 		throw PlotException("Boxplot", "Boxplot* create( const char*, double*, int, double )", __LINE__, 1, "data_size");
 	}
 
-	if (isnan(median) || isinf(median)) {
+	if (ISNAN(median) || !R_FINITE(median)) {
 		return NULL;
 	}
 
@@ -125,7 +125,7 @@ Boxplot* Boxplot::create(const char* name, double* sorted_data, int data_size, d
 		boxplot->tukey[1] = sorted_data[(int)integer - 1];
 	} else {
 		boxplot->tukey[1]  = (1 - fraction) * sorted_data[(int)integer - 1] + fraction * sorted_data[(int)integer];
-		if (isnan(boxplot->tukey[1])) {
+		if (ISNAN(boxplot->tukey[1])) {
 			boxplot->tukey[1] = sorted_data[(int)integer - 1];
 		}
 	}
@@ -136,7 +136,7 @@ Boxplot* Boxplot::create(const char* name, double* sorted_data, int data_size, d
 		boxplot->tukey[3] = sorted_data[(int)integer - 1];
 	} else {
 		boxplot->tukey[3] = (1 - fraction) * sorted_data[(int)integer - 1] + fraction * sorted_data[(int)integer];
-		if (isnan(boxplot->tukey[3])) {
+		if (ISNAN(boxplot->tukey[3])) {
 			boxplot->tukey[3] = sorted_data[(int)integer - 1];
 		}
 	}
@@ -190,12 +190,12 @@ Boxplot* Boxplot::create(const char* name, double* sorted_data, int data_size, d
 		int i = 0, j = 0;
 
 		/* BUG FIX: handle infinities */
-		while ((i < data_size) && (isinf(sorted_data[i]))) {
+		while ((i < data_size) && (!R_FINITE(sorted_data[i]))) {
 			i += 1;
 		}
 
 		j = data_size - 1;
-		while ((j >= 0) && (isinf(sorted_data[j]))) {
+		while ((j >= 0) && (!R_FINITE(sorted_data[j]))) {
 			j -= 1;
 		}
 

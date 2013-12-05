@@ -305,7 +305,8 @@
 \keyword{package}
 \examples{
 	\dontrun{
-	# all input and output files are located in the subdirectory "doc" of the installed GWAtoolbox package
+	# all input and output files are located in the 
+	# subdirectory "doc" of the installed GWAtoolbox package.
 	# change the workspace
 	currentWd <- getwd()
 	newWd <- paste(system.file(package="GWAtoolbox"), "doc", sep="/")

@@ -29,7 +29,7 @@
 	newWd <- paste(system.file(package="GWAtoolbox"), "doc", sep="/")
 	setwd(newWd)
 	}
-
+	\dontrun{
 	# name of an input script
 	script <- "GWASQC_script.txt"
 
@@ -38,16 +38,16 @@
 
 	# show contents of the input script
 	file.show(script, title=script)
-
+	}
 	\dontshow{options(device.ask.default = FALSE)}
-
+	\dontrun{
 	# run gwasqc() function
 	gwasqc(script)
 	
 	# run dispersion_check() function
 	Z <- dispersion_check("GWASQC_script.txt", plot=TRUE)
 	text(Z$median_n, Z$mean_se, labels=Z$study, pos=c(2,4,2,1,2))
-
+	}
 	\dontshow{
 	# restore previous workspace
 	setwd(currentWd)

@@ -32,7 +32,7 @@
 	newWd <- paste(system.file(package="GWAtoolbox"), "doc", sep="/")
 	setwd(newWd)
 	}
-
+	\dontrun{
 	# name of an input script
 	script <- "GWASQC_script.txt"
 
@@ -41,9 +41,9 @@
 
 	# show contents of the input script
 	file.show(script, title=script)
-
+	}
 	\dontshow{options(device.ask.default = FALSE)}
-
+	\dontrun{
 	# run gwasqc() function
 	gwasqc(script)
 	
@@ -51,7 +51,7 @@
 	W <- kusk_check("GWASQC_script.txt", worst = c(50), plot = TRUE)
 	points(W$sk50[W$ku50 > 5], W$ku50[W$ku50 > 5], pch = 22, bg = 2, cex = 2)
 	text(W$sk50[W$ku50 > 5], W$ku50[W$ku50 > 5], lab = W$study[W$ku50 > 5], cex = 1, pos = 4)
-
+	}
 	\dontshow{
 	# restore previous workspace
 	setwd(currentWd)

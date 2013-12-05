@@ -1,5 +1,5 @@
 /*
- * Copyright © 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
+ * Copyright ï¿½ 2011 Daniel Taliun, Christian Fuchsberger and Cristian Pattaro. All rights reserved.
  *
  * This file is part of GWAtoolbox.
  *
@@ -261,7 +261,7 @@ void Harmonizer::process_map_file_data() throw (HarmonizerException) {
 
 	char* chromosome = NULL;
 	char* id = NULL;
-	unsigned long int position = NULL;
+	unsigned long int position = 0ul;
 	char type = '\0';
 
 	int vt_length = strlen(VCF_VARIANT_TYPE);
